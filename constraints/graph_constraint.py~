@@ -1,0 +1,13 @@
+from constraint import Constraint
+
+class GraphConstraint(Constraint):
+
+  def __init__(self, constraint_list=[]):
+    super().__init__()
+
+  def add_constraint(constraint)
+    '''
+    param
+    constraint: list
+    '''
+    self.constraint_list+constraint
