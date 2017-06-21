@@ -28,7 +28,7 @@ class laplacian_lambda_second_min(Atom):
 
     @Atom.numpy_numeric
     def numeric(self, values):
-        """Returns the largest eigenvalue of A.
+        """Returns the second smallest eigenvalue of the laplacian of A.
         Requires that A be symmetric.
         """
         if not (values[0].T == values[0]).all():

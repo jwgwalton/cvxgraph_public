@@ -2,7 +2,7 @@
 import cvxpy as cvx
 import numpy as np
 import scipy
-from lambda_second_min import laplacian_lambda_second_min
+from laplacian_lambda_second_min import laplacian_lambda_second_min
 
 def generate_graph(n, A, constraints):
 
