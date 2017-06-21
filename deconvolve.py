@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import cvxpy as cvx
 import numpy as np
-from spectral_hull_constraint import SpectralHullConstraint
+#from constraints.spectral_hull_constraint import SpectralHullConstraint
 
 def create_adjacency_matrix(n, edge_list):
   adjacency_matrix = np.zeros((n,n))
