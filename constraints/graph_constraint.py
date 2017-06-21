@@ -1,4 +1,4 @@
-from constraint import Constraint
+from constraints.constraint import Constraint
 
 class GraphConstraint(Constraint):
 

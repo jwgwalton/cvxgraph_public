@@ -1,4 +1,4 @@
-from graph_constraint import GraphConstraint
+from constraints.graph_constraint import GraphConstraint
 import numpy as np
 import cvxpy as cvx
 
