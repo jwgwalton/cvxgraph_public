@@ -4,9 +4,9 @@ import numpy as np
 from deconvolve import create_adjacency_matrix
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.diagonal_constraint import DiagonalConstraint
-from constraints.aconstraint import AConstraint
 from constraints.degree_constraint import DegreeConstraint
-from constraint.max_weighted_degree_constraint import MaxWeightedDegreeConstraint
+from constraints.max_weighted_degree_constraint import MaxWeightedDegreeConstraint
+from constraints.node_limit_constraint import NodeLimitConstraint
 
 def test_family(A, M, constraints):
 
@@ -27,7 +27,7 @@ def generate_cycle_family_constraints(n,M):
   A_matrix = create_adjacency_matrix(n,A)
 
   # all values between 0 and 1
-  limit_constraints = AConstraint(M) # is it clearer to just have [M>=0,M<=1] 
+  limit_constraints = NodeLimitConstraint(M,0,1)
 
   # diag(A) == 0
   diagonal_constraints = DiagonalConstraint(n,M,0)    
@@ -40,7 +40,7 @@ def generate_cycle_family_constraints(n,M):
   # convex hull of 16 node cycles
   spectral_hull_constraint = SpectralHullConstraint(A_matrix,M)
 
-  return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints + spectral_hull_constraint.constraint_list
+  return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list + spectral_hull_constraint.constraint_list
 
 
 
@@ -48,12 +48,12 @@ def generate_sparse_well_connected_constraints(n,M):
   # sparse well-connected graphs on 16 nodes
 
   # all values between 0 and 1
-  limit_constraints = AConstraint(M) # clearer to have? [M>=0,M<=1]
+  limit_constraints = NodeLimitConstraint(M,0,1)
 
   # diag(M) == 0
   diagonal_constraints = DiagonalConstraint(n,M,0)  
 
-  # (A*ones)_i <= 2.5
+  # (A*ones)_i <= 2.5  
   degree_constraints = MaxWeightedDegreeConstraint(n,M,2.5)
 
   # TODO 2nd smalled eigenvalue of the laplacian must be >= 1.1

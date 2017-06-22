@@ -5,6 +5,7 @@ import scipy
 from atoms.laplacian_lambda_second_min import laplacian_lambda_second_min
 from constraints.diagonal_constraint import DiagonalConstraint
 from constraints.degree_constraint import DegreeConstraint
+from constraints.node_limit_constraint import NodeLimitConstraint
 
 def generate_graph(n, A, constraints):
 
@@ -37,7 +38,7 @@ if __name__ == '__main__':
   degree_constraints = DegreeConstraint(n,A,8)
  
   # all values between 0 and 1
-  limit_constraints = [A>=0,A<=1] 
+  limit_constraints = NodeLimitConstraint(A,0,1) 
 
   # 2nd largest eigenvalue of the laplacian >= 4
   laplacian_constraints = [laplacian_lambda_second_min(A)>=4]
@@ -45,7 +46,7 @@ if __name__ == '__main__':
   # diag(A) == 0
   diagonal_constraints = DiagonalConstraint(n,A,0) 
 
-  constraints = limit_constraints + diagonal_constraints.constraint_list + degree_constraints.constraint_list + laplacian_constraints
+  constraints = limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list + laplacian_constraints
 
   status,problem_value,graph = generate_graph(n, A, constraints)
 

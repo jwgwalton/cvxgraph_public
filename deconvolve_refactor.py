@@ -2,7 +2,7 @@
 import cvxpy as cvx
 import numpy as np
 from constraints.spectral_hull_constraint import SpectralHullConstraint
-from constraints.aconstraint import AConstraint
+from constraints.node_limit_constraint import NodeLimitConstraint
 
 def create_adjacency_matrix(n, edge_list):
   adjacency_matrix = np.zeros((n,n))
@@ -34,9 +34,9 @@ def deconvolve(n,A,A1,A2):
   A1_hull = SpectralHullConstraint(A1_matrix, A1_labelled)
   A2_hull = SpectralHullConstraint(A2_matrix, A2_labelled)
 
-  #Values have to be either 0 or 1
-  A1_limits = AConstraint(A1_labelled)
-  A2_limits = AConstraint(A2_labelled)
+  # 0<=A<=1
+  A1_limits = NodeLimitConstraint(A1_labelled,0,1)
+  A2_limits = NodeLimitConstraint(A2_labelled,0,1)
 
 
   constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 
