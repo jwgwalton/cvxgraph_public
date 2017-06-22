@@ -8,5 +8,5 @@ class MaxWeightedDegreeConstraint(Constraint):
 
   def create_constraints(self,n,A,max_weighted_degree):
     one_vec=np.ones(n)
-    return [A*one_vec == max_weighted_degree]
+    return [A*one_vec <= max_weighted_degree]
   

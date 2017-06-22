@@ -15,7 +15,7 @@ def generate_graph(n, A, constraints):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(verbose=True)
+  problem.solve()
 
   # gracefully handle failure or infeasibility?
 
