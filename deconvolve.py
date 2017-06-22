@@ -36,8 +36,14 @@ def deconvolve(n,A,A1,A2):
   #print('Trace A2: ', trace_A2.value)
 
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Symmetric(n)
-  A2_labelled = cvx.Symmetric(n)
+  A1_labelled = cvx.Int(n,n)
+  A2_labelled = cvx.Int(n,n)
+
+  A1_symmetric = cvx.Symmetric(n)
+  A2_symmetric = cvx.Symmetric(n)
+
+  A1_labelled = A1_symmetric
+  A2_labelled = A2_symmetric  #ugly way to  make a variable be both symmetric and mixed integer, moved to 
 
   # objective function
   objective = cvx.Minimize(cvx.norm(A_matrix - A1_labelled - A2_labelled))
@@ -55,7 +61,7 @@ def deconvolve(n,A,A1,A2):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(kktsolver='robust')
+  problem.solve() #need to install CBC,GUROBI (GLPK_MI and ECOS_BB can't solve semi-definite problems)
 
   #print('Sum of k largest eigenvalues, A1_labelled: ',sum(np.linalg.eigvalsh(A1_labelled.value)))
   #print('Sum of k largest eigenvalues, A2_labelled: ',sum(np.linalg.eigvalsh(A2_labelled.value)))

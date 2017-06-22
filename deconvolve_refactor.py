@@ -24,8 +24,8 @@ def deconvolve(n,A,A1,A2):
   A2_matrix = create_adjacency_matrix(n,A2)
 
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Symmetric(n)
-  A2_labelled = cvx.Symmetric(n)
+  A1_labelled = cvx.Symmetric(n)  #cvx.Int(n,n)
+  A2_labelled = cvx.Symmetric(n) #cvx.Int(n,n)
 
   # objective function
   objective = cvx.Minimize(cvx.norm(A_matrix - A1_labelled - A2_labelled))
@@ -43,7 +43,7 @@ def deconvolve(n,A,A1,A2):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(kktsolver='robust')
+  problem.solve(kktsolver='robust') #problem.solve(solver=cvx.CBC) or problem.solve(solver=cvx.GUROBI)
 
 
   # check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled

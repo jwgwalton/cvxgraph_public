@@ -1,8 +1,8 @@
-from constraints.graph_constraint import GraphConstraint
+from constraints.constraint import Constraint
 import numpy as np
 import cvxpy as cvx
 
-class SpectralHullConstraint(GraphConstraint):
+class SpectralHullConstraint(Constraint):
 
   def __init__(self, fixed_adjacency_matrix, variable_adjacency_matrix):
     super().__init__()

@@ -2,7 +2,8 @@
 import cvxpy as cvx
 import numpy as np
 import scipy
-from laplacian_lambda_second_min import laplacian_lambda_second_min
+from atoms.laplacian_lambda_second_min import laplacian_lambda_second_min
+from constraints.diagonal_constraint import DiagonalConstraint
 
 def generate_graph(n, A, constraints):
 
@@ -38,15 +39,13 @@ if __name__ == '__main__':
   # all values between 0 and 1
   limit_constraints = [A>=0,A<=1] 
 
-  # 2nd largest eigenvalue of the laplaciaan >= 4
+  # 2nd largest eigenvalue of the laplacian >= 4
   laplacian_constraints = [laplacian_lambda_second_min(A)>=4]
 
   # diag(A) == 0
-  diagonal_constraints =[]
-  for i in range(n):
-    diagonal_constraints.append(A[i,i]==0)    
+  diagonal_constraints = DiagonalConstraint(n,A,0) 
 
-  constraints = limit_constraints + diagonal_constraints + degree_constraints + laplacian_constraints
+  constraints = limit_constraints + diagonal_constraints.constraint_list + degree_constraints + laplacian_constraints
 
   status,problem_value,graph = generate_graph(n, A, constraints)
 

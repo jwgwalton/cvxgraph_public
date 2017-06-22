@@ -3,6 +3,7 @@ import cvxpy as cvx
 import numpy as np
 from deconvolve import create_adjacency_matrix
 from constraints.spectral_hull_constraint import SpectralHullConstraint
+from constraints.diagonal_constraint import DiagonalConstraint
 
 def test_family(A, M, constraints):
 
@@ -17,16 +18,16 @@ def test_family(A, M, constraints):
     return np.nan
 
 
-def generate_cycle_family_constraints(n,M,A):
-  # set of cycles on 16 nodes
+def generate_cycle_family_constraints(n,M):
+  #cycle on 16 nodes
+  A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0),)
+  A_matrix = create_adjacency_matrix(n,A)
 
   # all values between 0 and 1
   limit_constraints = [M>=0,M<=1] 
 
   # diag(A) == 0
-  diagonal_constraints =[]
-  for i in range(n):
-    diagonal_constraints.append(M[i,i]==0)    
+  diagonal_constraints = DiagonalConstraint(n,M,0)    
 
   # all nodes have degree 2
   one_vec=np.ones(n)
@@ -34,22 +35,21 @@ def generate_cycle_family_constraints(n,M,A):
 
   # TODO weird convex graph invariant
 
-  spectral_hull_constraint = SpectralHullConstraint(A,M)
+  # convex hull of 16 node cycles
+  spectral_hull_constraint = SpectralHullConstraint(A_matrix,M)
 
-  return limit_constraints + diagonal_constraints + degree_constraints + spectral_hull_constraint.constraint_list
+  return limit_constraints + diagonal_constraints.constraint_list + degree_constraints + spectral_hull_constraint.constraint_list
 
 
 
-def generate_sparse_well_connected_constraints(n,M,A):
+def generate_sparse_well_connected_constraints(n,M):
   # sparse well-connected graphs on 16 nodes
 
   # all values between 0 and 1
   limit_constraints = [M>=0,M<=1]
 
   # diag(M) == 0
-  diagonal_constraints =[]
-  for i in range(n):
-    diagonal_constraints.append(M[i,i]==0)    
+  diagonal_constraints = DiagonalConstraint(n,M,0)  
 
   # (A*ones)_i <= 2.5
   one_vec=np.ones(n)
@@ -58,20 +58,20 @@ def generate_sparse_well_connected_constraints(n,M,A):
   # TODO 2nd smalled eigenvalue of the laplacian must be >= 1.1
 
 
-  return limit_constraints + diagonal_constraints + degree_constraints
+  return limit_constraints + diagonal_constraints.constraint_list + degree_constraints
 
   
 
 if __name__ == '__main__':
-  # a 16 cycle
+  # a 16 node path (cycle with vertex removed
   n =16
-  A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0))
+  A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15))
   A_matrix = create_adjacency_matrix(n,A)
 
   M = cvx.Symmetric(n)
 
-  family_1_constraints = generate_cycle_family_constraints(n,M,A_matrix)
-  family_2_constraints = generate_sparse_well_connected_constraints(n,M,A_matrix)
+  family_1_constraints = generate_cycle_family_constraints(n,M)
+  family_2_constraints = generate_sparse_well_connected_constraints(n,M)
 
   family_1_similarity = test_family(A_matrix, M, family_1_constraints)
   family_2_similarity = test_family(A_matrix, M, family_2_constraints)
