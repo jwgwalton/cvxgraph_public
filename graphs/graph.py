@@ -1,20 +1,19 @@
 import numpy as np
 
-
-
-
-
 class Graph(object):
   '''
   Generic graph class, allows access to graph object as adjacency list or adjacency matrix
   '''
 
-  def __init__(self,n, graph):
-    # check type of input, if tuple set it as adjacency list and generate adjacency matrix, vice versa
-    # most pythonic way of doing this?
+  def __init__(self,n, adjacency_matrix=None, adjacency_list=None):
     self.number_of_nodes = n
-    self.adjacency_list = graph
-    self.adjacency_matrix = create_adjacency_matrix(self, n, graph)
+    # expects one or other to be populated, is this most pythonic way?
+    if adjacency_matrix == None:
+      self.adjacency_list = adjacency_list
+      self.adjacency_matrix = create_adjacency_matrix(n, adjacency_list)
+    if adjacency_list = None:
+      self.adjacency_list = create_adjacency_list(n, adjacency_matrix)
+      self.adjacency_matrix = adjacency_matrix
   
   @staticmethod
   def create_adjacency_matrix(n, edge_list):
