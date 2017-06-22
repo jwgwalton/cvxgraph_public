@@ -11,7 +11,7 @@ class Graph(object):
     if adjacency_matrix == None:
       self.adjacency_list = adjacency_list
       self.adjacency_matrix = create_adjacency_matrix(n, adjacency_list)
-    if adjacency_list = None:
+    if adjacency_list == None:
       self.adjacency_list = create_adjacency_list(n, adjacency_matrix)
       self.adjacency_matrix = adjacency_matrix
   
@@ -25,11 +25,17 @@ class Graph(object):
     return adjacency_matrix
 
   @staticmethod
-  def create_adjacency_list(self, n, matrix):
+  def create_adjacency_list(n, matrix):
     '''
     create an adjacency list from an adjaceny matrix
     '''
-    pass
+    edge_list=[]
+    for j in range(n):
+      for i in range(j):
+        if matrix[i,j] > 0: 
+          edge_list.append((i,j))
+    return tuple(edge_list)
+
 
 
 
