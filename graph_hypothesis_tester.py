@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import cvxpy as cvx
 import numpy as np
-from deconvolve import create_adjacency_matrix
+from graphs.graph import Graph
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.diagonal_constraint import DiagonalConstraint
 from constraints.degree_constraint import DegreeConstraint
@@ -24,7 +24,7 @@ def test_family(A, M, constraints):
 def generate_cycle_family_constraints(n,M):
   #cycle on 16 nodes
   A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0),)
-  A_matrix = create_adjacency_matrix(n,A)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
 
   # all values between 0 and 1
   limit_constraints = NodeLimitConstraint(M,0,1)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
   # a 16 node path (cycle with vertex removed
   n =16
   A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15))
-  A_matrix = create_adjacency_matrix(n,A)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
 
   M = cvx.Symmetric(n)
 

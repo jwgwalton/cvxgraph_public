@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
 import cvxpy as cvx
 import numpy as np
+from graphs.graph import Graph
 #from constraints.spectral_hull_constraint import SpectralHullConstraint
-
-def create_adjacency_matrix(n, edge_list):
-  adjacency_matrix = np.zeros((n,n))
-  for k in range(len(edge_list)):
-    i,j = edge_list[k]
-    adjacency_matrix[i][j]=1
-    adjacency_matrix[j][i]=1
-  return adjacency_matrix
 
 def deconvolve(n,A,A1,A2):
   '''
@@ -18,9 +11,9 @@ def deconvolve(n,A,A1,A2):
   A1: Component of A
   A2: component of A
   '''
-  A_matrix = create_adjacency_matrix(n,A)
-  A1_matrix = create_adjacency_matrix(n,A1)
-  A2_matrix = create_adjacency_matrix(n,A2)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
+  A1_matrix = Graph.create_adjacency_matrix(n,A1)
+  A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
   # sum of all eigenvalues
   eigenvalues_A1 = sum(np.linalg.eigvalsh(A1_matrix))
@@ -92,7 +85,7 @@ if __name__ == '__main__':
 
   status,problem_value,A1_star,A2_star= deconvolve(n,A,A1,A2)
 
-  A_matrix = create_adjacency_matrix(n,A)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
 
   print('Problem status: ',status)
   print('Norm value: ',problem_value)
