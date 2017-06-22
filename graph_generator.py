@@ -4,6 +4,7 @@ import numpy as np
 import scipy
 from atoms.laplacian_lambda_second_min import laplacian_lambda_second_min
 from constraints.diagonal_constraint import DiagonalConstraint
+from constraints.degree_constraint import DegreeConstraint
 
 def generate_graph(n, A, constraints):
 
@@ -33,8 +34,7 @@ if __name__ == '__main__':
   A = cvx.Symmetric(n)
 
   # all nodes have degree 8
-  one_vec=np.ones(n)
-  degree_constraints = [(1/8)*A*one_vec == one_vec]
+  degree_constraints = DegreeConstraint(n,A,8)
  
   # all values between 0 and 1
   limit_constraints = [A>=0,A<=1] 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
   # diag(A) == 0
   diagonal_constraints = DiagonalConstraint(n,A,0) 
 
-  constraints = limit_constraints + diagonal_constraints.constraint_list + degree_constraints + laplacian_constraints
+  constraints = limit_constraints + diagonal_constraints.constraint_list + degree_constraints.constraint_list + laplacian_constraints
 
   status,problem_value,graph = generate_graph(n, A, constraints)
 
