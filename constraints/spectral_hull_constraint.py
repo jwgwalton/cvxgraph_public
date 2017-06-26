@@ -15,5 +15,4 @@ class SpectralHullConstraint(Constraint):
 
     m,n = fixed_adjacency_matrix.shape
     
-    #should i be doing this by using add method?
     self.constraint_list = [cvx.trace(variable_adjacency_matrix) == trace, cvx.lambda_sum_largest(variable_adjacency_matrix,n) <= sum_of_eigen_values]

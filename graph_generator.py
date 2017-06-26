@@ -38,10 +38,10 @@ if __name__ == '__main__':
   degree_constraints = DegreeConstraint(n,A,8)
  
   # all values between 0 and 1
-  limit_constraints = NodeLimitConstraint(A,0,1) 
+  limit_constraints = NodeLimitConstraint(A,lower_limit=0, upper_limit=1) 
 
   # 2nd largest eigenvalue of the laplacian >= 4
-  laplacian_constraints = [laplacian_lambda_second_min(A)>=4]
+  laplacian_constraints = [laplacian_lambda_second_min(A)>=4] #currently isn't constraining this properly
 
   # diag(A) == 0
   diagonal_constraints = DiagonalConstraint(n,A,0) 

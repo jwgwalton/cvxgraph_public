@@ -17,7 +17,7 @@ def deconvolve(n,A,A1,A2):
   A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Symmetric(n)  #cvx.Int(n,n)
+  A1_labelled = cvx.Symmetric(n)  #cvx.Int(n,n) use new symmetric integer in variables 
   A2_labelled = cvx.Symmetric(n) #cvx.Int(n,n)
 
   # objective function
@@ -28,8 +28,8 @@ def deconvolve(n,A,A1,A2):
   A2_hull = SpectralHullConstraint(A2_matrix, A2_labelled)
 
   # all values between 0 and 1
-  A1_limits = NodeLimitConstraint(A1_labelled,0,1)
-  A2_limits = NodeLimitConstraint(A2_labelled,0,1)
+  A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
+  A2_limits = NodeLimitConstraint(A2_labelled,lower_limit=0, upper_limit=1)
 
 
   constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 

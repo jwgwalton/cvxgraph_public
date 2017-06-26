@@ -7,6 +7,7 @@ from constraints.diagonal_constraint import DiagonalConstraint
 from constraints.degree_constraint import DegreeConstraint
 from constraints.max_weighted_degree_constraint import MaxWeightedDegreeConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
+#from atoms.laplacian_lambda_second_min import laplacian_lambda_second_min
 
 def test_family(A, M, constraints):
 
@@ -22,12 +23,8 @@ def test_family(A, M, constraints):
 
 
 def generate_cycle_family_constraints(n,M):
-  #cycle on 16 nodes
-  A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0),)
-  A_matrix = Graph.create_adjacency_matrix(n,A)
-
   # all values between 0 and 1
-  limit_constraints = NodeLimitConstraint(M,0,1)
+  limit_constraints = NodeLimitConstraint(M,lower_limit=0, upper_limit=1)
 
   # diag(A) == 0
   diagonal_constraints = DiagonalConstraint(n,M,0)    
@@ -38,6 +35,9 @@ def generate_cycle_family_constraints(n,M):
   # TODO weird convex graph invariant
 
   # convex hull of 16 node cycles
+  A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0),)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
+
   spectral_hull_constraint = SpectralHullConstraint(A_matrix,M)
 
   return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list + spectral_hull_constraint.constraint_list
@@ -48,7 +48,7 @@ def generate_sparse_well_connected_constraints(n,M):
   # sparse well-connected graphs on 16 nodes
 
   # all values between 0 and 1
-  limit_constraints = NodeLimitConstraint(M,0,1)
+  limit_constraints = NodeLimitConstraint(M,lower_limit=0, upper_limit=1)
 
   # diag(M) == 0
   diagonal_constraints = DiagonalConstraint(n,M,0)  
@@ -57,7 +57,7 @@ def generate_sparse_well_connected_constraints(n,M):
   degree_constraints = MaxWeightedDegreeConstraint(n,M,2.5)
 
   # TODO 2nd smalled eigenvalue of the laplacian must be >= 1.1
-
+  #laplacian_constraints = [laplacian_lambda_second_min(A)>=1.1] #currently isn't constraining this properly
 
   return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list
 
