@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import cvxpy as cvx
 import numpy as np
+from constraints.spectral_hull_constraint import SpectralHullConstraint
+from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
-#from constraints.spectral_hull_constraint import SpectralHullConstraint
 
 def deconvolve(n,A,A1,A2):
   '''
@@ -15,51 +16,36 @@ def deconvolve(n,A,A1,A2):
   A1_matrix = Graph.create_adjacency_matrix(n,A1)
   A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
-  # sum of all eigenvalues
-  eigenvalues_A1 = sum(np.linalg.eigvalsh(A1_matrix))
-  eigenvalues_A2 = sum(np.linalg.eigvalsh(A2_matrix))
-
-  # check sum of n largest eigenvalues
-  #print('Sum of k largest eigenvalues, A1:', eigenvalues_A1)
-  #print('Sum of k largest eigenvalues, A2:', eigenvalues_A2)
-
-  trace_A1 = cvx.trace(A1_matrix)
-  trace_A2 = cvx.trace(A2_matrix)
-  #print('Trace A1: ', trace_A1.value)
-  #print('Trace A2: ', trace_A2.value)
-
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Int(n,n)
-  A2_labelled = cvx.Int(n,n)
+  A1_labelled = cvx.Symmetric(n)  
+  A2_labelled = cvx.Symmetric(n)
 
-  A1_symmetric = cvx.Symmetric(n)
-  A2_symmetric = cvx.Symmetric(n)
-
-  A1_labelled = A1_symmetric
-  A2_labelled = A2_symmetric  #ugly way to  make a variable be both symmetric and mixed integer, moved to 
+  #A1_labelled = cvx.Int(n,n) 
+  #A2_labelled = cvx.Int(n,n) 
+  #ugly way to  make a variable be both symmetric and mixed integer, move to variable class SymmetricInt(n)
+  #A1_symmetric = cvx.Symmetric(n)
+  #A2_symmetric = cvx.Symmetric(n)
+  #A1_labelled = A1_symmetric
+  #A2_labelled = A2_symmetric  
 
   # objective function
   objective = cvx.Minimize(cvx.norm(A_matrix - A1_labelled - A2_labelled))
 
-  # Constraint sets - move to use spectral hull constraint once working properly, easier to read procedurally
-  convex_hull_A1 = [cvx.trace(A1_labelled) == trace_A1, cvx.lambda_sum_largest(A1_labelled,n) <= eigenvalues_A1]
-  convex_hull_A2 = [cvx.trace(A2_labelled) == trace_A2, cvx.lambda_sum_largest(A2_labelled,n) <= eigenvalues_A2]
+  # Constraint sets
+  A1_hull = SpectralHullConstraint(A1_matrix, A1_labelled)
+  A2_hull = SpectralHullConstraint(A2_matrix, A2_labelled)
 
-  #Values have to be either 0 or 1, how to do it???
-  limit_constraints = [A1_labelled>=0, A1_labelled<=1, A2_labelled>=0, A2_labelled<=1] 
+  # all values between 0 and 1
+  A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
+  A2_limits = NodeLimitConstraint(A2_labelled,lower_limit=0, upper_limit=1)
 
-  #print('Sum of k largest eigenvalues for labelled A1: ',sum(np.linalg.eigvalsh(A1_labelled.value)))
 
-  constraints =  convex_hull_A1 + convex_hull_A2 + limit_constraints
+  constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(verbose=True,solver=cvx.GLPK_MI) #need to install CBC,GUROBI (GLPK_MI and ECOS_BB can't solve semi-definite problems)
+  problem.solve(kktsolver='robust') #problem.solve(solver=cvx.CBC) or problem.solve(solver=cvx.GUROBI)
 
-  #print('Sum of k largest eigenvalues, A1_labelled: ',sum(np.linalg.eigvalsh(A1_labelled.value)))
-  #print('Sum of k largest eigenvalues, A2_labelled: ',sum(np.linalg.eigvalsh(A2_labelled.value)))
-  #print('Trace A1_labelled: ', cvx.trace(A1_labelled).value)
-  #print('Trace A2_labelled: ', cvx.trace(A2_labelled).value)
 
   # check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled
   # correct if and only if
