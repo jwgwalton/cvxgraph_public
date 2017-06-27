@@ -51,12 +51,8 @@ if __name__ == '__main__':
   status,problem_value,graph = generate_graph(n, A, constraints)
 
   print('Problem status ',status)
-  print('Adjacency matric which satisfies constraints: ', np.round(graph,5))
-  print('Dimensions of Adjacency matrix: ', np.shape(graph))
- 
+  print('Adjacency matrix which satisfies constraints: ', np.round(graph,5)) 
   laplacian_of_adjacency_matrix = scipy.sparse.csgraph.laplacian(graph)
   sorted_eigen_values = np.linalg.eigvalsh(laplacian_of_adjacency_matrix)
-  #print('Eigenvalues of laplacian: ',sorted_eigen_values)
   print('2nd smallest eigenvalue: ', sorted_eigen_values[1])
-  # trying to be smart and create a set and check content and length to print true false
   print('Degree of nodes : ',np.reshape(np.sum(graph,axis=1),n))
