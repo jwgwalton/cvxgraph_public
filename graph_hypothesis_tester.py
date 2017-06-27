@@ -21,8 +21,22 @@ def test_family(A, M, constraints):
   else:
     return np.nan
 
+def test_families(A,M, family_1_constraints, family_2_constraints):
+
+  family_1_similarity = test_family(A, M, family_1_constraints)
+  family_2_similarity = test_family(A, M, family_2_constraints)
+
+  print('First family similarity: ',family_1_similarity)
+  print('Second family similarity: ',family_2_similarity)
+
+  if family_1_similarity >= family_2_similarity:
+    print('The first family is the best match for the graph')
+  else:
+    print('The second family is the best match for the graph')
 
 def generate_cycle_family_constraints(n,M):
+  # 16-node cycles 
+
   # all values between 0 and 1
   limit_constraints = NodeLimitConstraint(M,lower_limit=0, upper_limit=1)
 
@@ -74,13 +88,5 @@ if __name__ == '__main__':
   family_1_constraints = generate_cycle_family_constraints(n,M)
   family_2_constraints = generate_sparse_well_connected_constraints(n,M)
 
-  family_1_similarity = test_family(A_matrix, M, family_1_constraints)
-  family_2_similarity = test_family(A_matrix, M, family_2_constraints)
+  test_families(A_matrix, M, family_1_constraints,family_2_constraints)
 
-  print('First family similarity: ',family_1_similarity)
-  print('Second family similarity: ',family_2_similarity)
-
-  if family_1_similarity >= family_2_similarity:
-    print('The first family is the best match for the graph')
-  else:
-    print('The second family is the best match for the graph')

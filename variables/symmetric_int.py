@@ -5,7 +5,7 @@ def SymmetricInt(n):
   Returns a n*n symmetric integer matrix
   current method in cvxpy to force a variable to have multiple properties
   '''
-  integer = cvx.Int(n,n)
-  symmetric = cvx.Symmetric(n)
-  symmetric = integer
-  return symmetric
+  integer_matrix = cvx.Int(n,n)
+  symmetric_matrix = cvx.Symmetric(n)
+  symmetric_matrix = integer_matrix
+  return symmetric_matrix

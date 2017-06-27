@@ -32,7 +32,6 @@ def deconvolve(n,A,A1,A2):
   A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
   A2_limits = NodeLimitConstraint(A2_labelled,lower_limit=0, upper_limit=1)
 
-
   constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 
 
   problem = cvx.Problem(objective,constraints)
