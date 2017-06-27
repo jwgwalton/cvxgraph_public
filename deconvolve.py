@@ -54,7 +54,7 @@ def deconvolve(n,A,A1,A2):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve() #need to install CBC,GUROBI (GLPK_MI and ECOS_BB can't solve semi-definite problems)
+  problem.solve(verbose=True,solver=cvx.GLPK_MI) #need to install CBC,GUROBI (GLPK_MI and ECOS_BB can't solve semi-definite problems)
 
   #print('Sum of k largest eigenvalues, A1_labelled: ',sum(np.linalg.eigvalsh(A1_labelled.value)))
   #print('Sum of k largest eigenvalues, A2_labelled: ',sum(np.linalg.eigvalsh(A2_labelled.value)))
