@@ -4,6 +4,7 @@ import numpy as np
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
+from variables.symmetric_int import SymmetricInt
 
 def deconvolve(n,A,A1,A2):
   '''
@@ -17,16 +18,8 @@ def deconvolve(n,A,A1,A2):
   A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Symmetric(n)  
-  A2_labelled = cvx.Symmetric(n)
-
-  #A1_labelled = cvx.Int(n,n) 
-  #A2_labelled = cvx.Int(n,n) 
-  #ugly way to  make a variable be both symmetric and mixed integer, move to variable class SymmetricInt(n)
-  #A1_symmetric = cvx.Symmetric(n)
-  #A2_symmetric = cvx.Symmetric(n)
-  #A1_labelled = A1_symmetric
-  #A2_labelled = A2_symmetric  
+  A1_labelled = SymmetricInt(n)  
+  A2_labelled = SymmetricInt(n)
 
   # objective function
   objective = cvx.Minimize(cvx.norm(A_matrix - A1_labelled - A2_labelled))
@@ -44,8 +37,7 @@ def deconvolve(n,A,A1,A2):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(kktsolver='robust') #problem.solve(solver=cvx.CBC) or problem.solve(solver=cvx.GUROBI)
-
+  problem.solve(solver=cvx.ECOS_BB) # NEED MISDP SOLVER!!!
 
   # check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled
   # correct if and only if
