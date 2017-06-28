@@ -8,6 +8,7 @@ from constraints.degree_constraint import DegreeConstraint
 from constraints.max_weighted_degree_constraint import MaxWeightedDegreeConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from constraints.laplacian_lambda_second_min_constraint import LaplacianLambdaSecondMinConstraint
+from constraints.triangle_free_constraint import TriangleFreeConstraint
 
 def test_family(A, M, constraints):
 
@@ -46,7 +47,7 @@ def generate_cycle_family_constraints(n,M):
   # all nodes have degree 2
   degree_constraints = DegreeConstraint(n,M,2)
 
-  # TODO weird convex graph invariant, ForbiddenSubGraphConstraint
+  triangle_free_constraints = TriangleFreeConstraint(M)
 
   # convex hull of 16 node cycles
   A = ((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,0),)
@@ -54,7 +55,7 @@ def generate_cycle_family_constraints(n,M):
 
   spectral_hull_constraint = SpectralHullConstraint(A_matrix,M)
 
-  return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list + spectral_hull_constraint.constraint_list
+  return limit_constraints.constraint_list + diagonal_constraints.constraint_list + degree_constraints.constraint_list + spectral_hull_constraint.constraint_list# + triangle_free_constraints.constraint_list
 
 
 
