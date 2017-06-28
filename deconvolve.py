@@ -4,7 +4,6 @@ import numpy as np
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
-from variables.symmetric_int import SymmetricInt
 
 def deconvolve(n,A,A1,A2):
   '''
@@ -18,8 +17,8 @@ def deconvolve(n,A,A1,A2):
   A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
   # Realisations of the precise labelling of A1 and A2
-  A1_labelled = SymmetricInt(n)  
-  A2_labelled = SymmetricInt(n)
+  A1_labelled = cvx.Symmetric(n)  
+  A2_labelled = cvx.Symmetric(n)
 
   # objective function
   objective = cvx.Minimize(cvx.norm(A_matrix - A1_labelled - A2_labelled))
@@ -36,7 +35,7 @@ def deconvolve(n,A,A1,A2):
 
   problem = cvx.Problem(objective,constraints)
 
-  problem.solve(solver=cvx.ECOS_BB) # NEED MISDP SOLVER!!!
+  problem.solve(kktsolver='robust')
 
   # check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled
   # correct if and only if
@@ -50,15 +49,15 @@ def deconvolve(n,A,A1,A2):
 
 
 if __name__ == '__main__':
-  # A= K_4
-  n = 4
-  A=((0,1),(0,2),(0,3),(1,2),(1,3),(2,3),)
+  n=16
+  #  check size(A) = size(A1)+ size(A2)
+  A = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),(0,1),(0,4),(0,9),(0,7),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,7),(4,8),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
+  
+  #16 cycle
+  A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
-  # A1 = cycle 
-  A1=((0,1),(1,2),(2,3),(3,0),)
-
-  # A2 = cross joining all nodes
-  A2=((0,2),(1,3),)
+  #clebsch graph
+  A2=((0,1),(0,4),(0,9),(0,7),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,7),(4,8),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
 
   status,problem_value,A1_star,A2_star= deconvolve(n,A,A1,A2)
 
@@ -67,7 +66,7 @@ if __name__ == '__main__':
   print('Problem status: ',status)
   print('Norm value: ',problem_value)
   print('A:  \n', A_matrix)
-  print('A1: \n', np.round(A1_star,5))
-  print('A2: \n', np.round(A2_star,5))
-  print('A1+A2: \n ', np.round(np.add(A1_star,A2_star),5))
+  print('A1: \n', np.round(A1_star,1))
+  print('A2: \n', np.round(A2_star,1))
+  print('A1+A2: \n ', np.round(np.add(A1_star,A2_star),1))
 
