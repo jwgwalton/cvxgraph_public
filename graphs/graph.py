@@ -18,8 +18,7 @@ class Graph(object):
   @staticmethod
   def create_adjacency_matrix(n, edge_list):
     adjacency_matrix = np.zeros((n,n))
-    for k in range(len(edge_list)):
-      i,j = edge_list[k]
+    for i,j in edge_list:
       adjacency_matrix[i][j]=1
       adjacency_matrix[j][i]=1
     return adjacency_matrix
