@@ -5,16 +5,26 @@ from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
 
-def deconvolve(n,A,A1,A2):
+
+def check_solution(A1,A2, tol):
+  '''
+  Checks returns exact decomposition, i.e returns integers for the distinct edges
+  '''
+  m,n = A1.shape
+  convolved_matrix = A1 + A2
+  for i in range(1,n):
+    for j in range(1,i):
+     if convolved_matrix[i,j] < 1+tol or convolved_matrix[i,j] > 0+tol:
+       return False
+  return True
+
+def deconvolve(n,A_matrix,A1_matrix,A2_matrix):
   '''
   n: number of nodes/dimension of adjacency matrix
-  A: Composition of A1 and A2, don't know labelling
-  A1: Component of A
+  A: Composition of A1 and A2
+  A1: Component of A 
   A2: component of A
   '''
-  A_matrix  = Graph.create_adjacency_matrix(n,A)
-  A1_matrix = Graph.create_adjacency_matrix(n,A1)
-  A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
   # Realisations of the precise labelling of A1 and A2
   A1_labelled = cvx.Symmetric(n)  
@@ -37,30 +47,39 @@ def deconvolve(n,A,A1,A2):
 
   problem.solve(kktsolver='robust')
 
-  # check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled
+  # TODO check correctness by looking at intersection of tangent cones for A1_labelled and A2_labelled
   # correct if and only if
-
   #  Tc(A1_labelled) ∩ - Tc(A2_labelled) ={0}
 
+  # checks if within tolerance of 0 and 1
+  problem_correct = check_solution(A1_labelled.value, A2_labelled.value, 1e-4)
+  print('Problem correct: ', problem_correct)
+
   if problem.status=='optimal':
-    return problem.status,problem.value,A1_labelled.value,A2_labelled.value
+    return problem.status,problem_correct,problem.value,A1_labelled.value,A2_labelled.value
   else:
-    return problem.status,np.nan,np.nan,np.nan
+    return problem.status,problem_correct,np.nan,np.nan,np.nan
 
 
 if __name__ == '__main__':
-  n=16
-  #  check size(A) = size(A1)+ size(A2)
-  A = ((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),(0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
-  
-  #16 cycle
-  A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
+  # complete graph, K_4, not appropriate for deconvolve?
 
-  #clebsch graph
-  A2=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
+  # A= K_4
+  n = 4
+  A=((0,1),(0,2),(0,3),(1,2),(1,3),(2,3),)
 
-  status,problem_value,A1_star,A2_star= deconvolve(n,A,A1,A2)
-  A_matrix = Graph.create_adjacency_matrix(n,A)
+  # A1 = cycle 
+  A1=((0,1),(1,2),(2,3),(3,0),)
+
+  # A2 = cross joining all nodes
+  A2=((0,2),(1,3),)
+
+  A_matrix  = Graph.create_adjacency_matrix(n,A)
+  A1_matrix = Graph.create_adjacency_matrix(n,A1)
+  A2_matrix = Graph.create_adjacency_matrix(n,A2)
+
+  status,is_correct,problem_value,A1_star,A2_star= deconvolve(n,A_matrix,A1_matrix,A2_matrix)
+
   np.set_printoptions(suppress=True)
   print('Problem status: ',status)
   print('Norm value: ',problem_value)
