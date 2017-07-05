@@ -4,23 +4,30 @@ import numpy as np
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
+from utils import Utils
 
 class GraphDeconvolver():
 
   def __init__(self, n, A1, A2):
+    '''
+    Recovers the precise labelling of the decomposition of A which is an unknown labelling of the convolution of A1 and A2.
+
+    Args:
+      n  (int)    : number of nodes/dimension of adjacency matrix
+      A1 (tuple) : Component of A 
+      A2 (tuple) : Component of A
+
+    '''
     self.n = n
-    self.A1 = Graph.create_adjacency_matrix(n,A1)
+    self.A1 = Graph.create_adjacency_matrix(n,A1) #could accept either matrix or tuple and create matrix if needed?
     self.A2 = Graph.create_adjacency_matrix(n,A2)
 
   def deconvolve(self, A):
     '''
-    Recover the precise labelling of the decomposition of A which is an unknown labelling of the convolution of A1 and A2.
+    Recover the precise labelling of A1 and A2, A = A1+A2.
 
     Args:
-      n  (int)    : number of nodes/dimension of adjacency matrix
       A  (matrix) : Composition of A1 and A2
-      A1 (matrix) : Component of A 
-      A2 (matrix) : component of A
 
     Returns:
       problem.status  (str)    : Optimal/
@@ -51,19 +58,23 @@ class GraphDeconvolver():
 
     problem.solve(kktsolver='robust')
 
-    problem_correct = self.check_solution(A1_labelled.value, A2_labelled.value, 1e-2)
+    problem_correct = self.check_solution(A, A1_labelled.value, A2_labelled.value, 1e-2)
 
     if problem.status=='optimal':
       return problem.status,problem_correct,problem.value,A1_labelled.value,A2_labelled.value
     else:
       return problem.status,problem_correct,np.nan,np.nan,np.nan
 
-  def check_solution(self, A1, A2, tol):
+  def check_solution(self, A, A1, A2, tol):
     '''
     Checks returns exact decomposition,
     i.e returns integers for the distinct edges and both graphs are separate
     '''
     m,n = A1.shape
+    #Check A=A1+A2
+    if not (Utils.deep_equals(A,A1+A2)):
+      return False
+
     for i in range(0,n):
       for j in range(0,i):
         if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol) or not self.is_exact_decomposition(A2[i,j],A1[i,j],tol) or not self.is_empty(A1[i,j],A2[i,j]):
@@ -71,6 +82,7 @@ class GraphDeconvolver():
     return True
 
   def is_exact_decomposition(self, A1, A2, tol):
+    '''A1==1 and A2==0, within tolerance tol'''
     return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
 
   def is_empty(self, A1, A2):
