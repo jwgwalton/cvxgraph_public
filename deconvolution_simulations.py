@@ -35,6 +35,7 @@ iterations = 10
 
 for i in range(1,iterations):
   status,is_correct,problem_value,A1_star,A2_star= deconvolve(n,A_matrix,A1_matrix,A2_matrix)
+  print('Problem correct: ', is_correct)
   if is_correct == True:
     correct_count +=1
   A_matrix= permute_matrix(A_matrix)
