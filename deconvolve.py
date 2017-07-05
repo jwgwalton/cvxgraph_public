@@ -5,69 +5,76 @@ from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
 
-def is_exact_decomposition(A1,A2,tol):
-  return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
+class GraphDeconvolver():
 
-def is_empty(A1, A2):
-  return (A2 == A1 == 0)
+  def __init__(self, n, A1, A2):
+    self.n = n
+    self.A1 = Graph.create_adjacency_matrix(n,A1)
+    self.A2 = Graph.create_adjacency_matrix(n,A2)
 
-def check_solution(A1,A2, tol):
-  '''
-  Checks returns exact decomposition,
-   i.e returns integers for the distinct edges and both graphs are separate
-  '''
-  m,n = A1.shape
-  for i in range(0,n):
-    for j in range(0,i):
-      if not is_exact_decomposition(A1[i,j],A2[i,j],tol) or not is_exact_decomposition(A2[i,j],A1[i,j],tol) or not is_empty(A1[i,j],A2[i,j]):
-        return False
-  return True
+  def deconvolve(self, A):
+    '''
+    Recover the precise labelling of the decomposition of A which is an unknown labelling of the convolution of A1 and A2.
 
-def deconvolve(n,A,A1,A2):
-  '''
-  Recover the precise labelling of the decomposition of A which is an unknown labelling of the convolution of A1 and A2.
+    Args:
+      n  (int)    : number of nodes/dimension of adjacency matrix
+      A  (matrix) : Composition of A1 and A2
+      A1 (matrix) : Component of A 
+      A2 (matrix) : component of A
 
-  Args:
-    n  (int)    : number of nodes/dimension of adjacency matrix
-    A  (matrix) : Composition of A1 and A2
-    A1 (matrix) : Component of A 
-    A2 (matrix) : component of A
+    Returns:
+      problem.status  (str)    : Optimal/
+      problem_correct (bool)   : Correctness of solution using internal method
+      problem.value   (float)  : Value of objective function (Euclidean norm of (A-A1*-A2*))
+      A1*             (matrix) : Precise labelling of A1
+      A2*             (matrix) : Precise labelling of A2
+    '''
 
-  Returns:
-   problem.status  (str)    : Optimal/
-   problem_correct (bool)   : Correctness of solution using internal method
-   problem.value   (float)  : Value of objective function (Euclidean norm of (A-A1*-A2*))
-   A1*             (matrix) : Precise labelling of A1
-   A2*             (matrix) : Precise labelling of A2
-  '''
+    # Realisations of the precise labelling of A1 and A2
+    A1_labelled = cvx.Symmetric(self.n)  
+    A2_labelled = cvx.Symmetric(self.n)
 
-  # Realisations of the precise labelling of A1 and A2
-  A1_labelled = cvx.Symmetric(n)  
-  A2_labelled = cvx.Symmetric(n)
+    # objective function
+    objective = cvx.Minimize(cvx.pnorm((A - A1_labelled - A2_labelled), 2))
 
-  # objective function
-  objective = cvx.Minimize(cvx.pnorm((A - A1_labelled - A2_labelled), 2))
+    # Convex hull constraints
+    A1_hull = SpectralHullConstraint(self.A1, A1_labelled)
+    A2_hull = SpectralHullConstraint(self.A2, A2_labelled)
 
-  # Convex hull constraints
-  A1_hull = SpectralHullConstraint(A1, A1_labelled)
-  A2_hull = SpectralHullConstraint(A2, A2_labelled)
+    # all values between 0 and 1
+    A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
+    A2_limits = NodeLimitConstraint(A2_labelled,lower_limit=0, upper_limit=1)
 
-  # all values between 0 and 1
-  A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
-  A2_limits = NodeLimitConstraint(A2_labelled,lower_limit=0, upper_limit=1)
+    constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 
 
-  constraints = A1_hull.constraint_list + A2_hull.constraint_list + A1_limits.constraint_list + A2_limits.constraint_list 
+    problem = cvx.Problem(objective,constraints)
 
-  problem = cvx.Problem(objective,constraints)
+    problem.solve(kktsolver='robust')
 
-  problem.solve(kktsolver='robust')
+    problem_correct = self.check_solution(A1_labelled.value, A2_labelled.value, 1e-2)
 
-  problem_correct = check_solution(A1_labelled.value, A2_labelled.value, 1e-2)
+    if problem.status=='optimal':
+      return problem.status,problem_correct,problem.value,A1_labelled.value,A2_labelled.value
+    else:
+      return problem.status,problem_correct,np.nan,np.nan,np.nan
 
-  if problem.status=='optimal':
-    return problem.status,problem_correct,problem.value,A1_labelled.value,A2_labelled.value
-  else:
-    return problem.status,problem_correct,np.nan,np.nan,np.nan
+  def check_solution(self, A1, A2, tol):
+    '''
+    Checks returns exact decomposition,
+    i.e returns integers for the distinct edges and both graphs are separate
+    '''
+    m,n = A1.shape
+    for i in range(0,n):
+      for j in range(0,i):
+        if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol) or not self.is_exact_decomposition(A2[i,j],A1[i,j],tol) or not self.is_empty(A1[i,j],A2[i,j]):
+          return False
+    return True
+
+  def is_exact_decomposition(self, A1, A2, tol):
+    return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
+
+  def is_empty(self, A1, A2):
+    return (A2 == A1 == 0)
 
 
 if __name__ == '__main__':
@@ -82,10 +89,10 @@ if __name__ == '__main__':
   A2=((0,2),(1,3),)
 
   A_matrix  = Graph.create_adjacency_matrix(n,A)
-  A1_matrix = Graph.create_adjacency_matrix(n,A1)
-  A2_matrix = Graph.create_adjacency_matrix(n,A2)
 
-  status,is_correct,problem_value,A1_star,A2_star= deconvolve(n,A_matrix,A1_matrix,A2_matrix)
+  graph_deconvolver = GraphDeconvolver(n,A1,A2)
+
+  status,is_correct,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
 
   np.set_printoptions(suppress=True)
   print('Problem status: ',status)
