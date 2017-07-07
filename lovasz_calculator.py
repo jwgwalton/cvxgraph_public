@@ -4,7 +4,7 @@ import cvxpy as cvx
 import numpy as np
 from graphs.complement_graph import ComplementGraph
 
-class lovasz_calculator:
+class LovaszCalculator:
   LAMBDA_METHOD = 'lambda'
   TRACE_METHOD = 'trace'
 
@@ -94,7 +94,7 @@ class lovasz_calculator:
 
 if __name__ == '__main__':
 
-  lovasz_calculator = lovasz_calculator()
+  lovasz_calculator = LovaszCalculator()
 
   # K_4, 4 node complete graph.
   # theta(K_n) = 1  
