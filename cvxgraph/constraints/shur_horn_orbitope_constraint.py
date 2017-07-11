@@ -2,7 +2,7 @@ from constraints.constraint import Constraint
 import cvxpy as cvx
 import numpy as np
 
-class ShurHornOrbitopeConstraint(Constraint):
+class SchurHornOrbitopeConstraint(Constraint):
 
   def __init__(self, fixed_adjacency_matrix, variable_adjacency_matrix):
     super().__init__()
