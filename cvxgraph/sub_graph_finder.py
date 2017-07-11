@@ -5,6 +5,7 @@ from graphs.graph import Graph
 from graphs.erdos_renyi_graph import ErdosRenyiGraph
 from utils.utils import Utils
 from constraints.spectral_hull_constraint import SpectralHullConstraint
+from constraints.edge_location_constraint import EdgeLocationConstraint
 from collections import Counter
 
 def transform_matrix(n,A_tau,gamma):
@@ -33,13 +34,8 @@ def sub_graph_finder(A_tau, A0):
   #objective function
   objective = cvx.Maximize(cvx.trace(A*A0)) 
 
-  # TODO REPLACE WITH EdgeLocationConstraint class
   # A_i,j = 0 if A0_i,j = 0 (and i != j)
-  edge_constraints =[]
-  for i in range(0,n):
-    for j in range(0,i):
-      if A0[i,j] == 0 and i != j: 
-        edge_constraints += [A[i,j] ==0] # dont need to do symmetric equivalent as A is a symmetric variable
+  edge_constraints = EdgeLocationConstraint(n,A0,A,0)
   
   # γ =eigenvalue corresponding to the largest eigenspace of the corresponding graph (eigenvalue with highest multiplicity)
   gamma = calculate_gamma(A_tau)
@@ -47,7 +43,7 @@ def sub_graph_finder(A_tau, A0):
   #TODO SCHUR-HORN CONSTRAINT (semi-definite representation is the same as the spectral hull constraint (but can be reduced for multiplicative eigenvalues)
   schur_horn_constraints = SpectralHullConstraint(transform_matrix(n, A_tau, gamma), A) #doesn't take advantage of the simplifications due to the small numbers of eigenvalues
   
-  constraints = edge_constraints + schur_horn_constraints.constraint_list
+  constraints = edge_constraints.constraint_list + schur_horn_constraints.constraint_list
   
   problem = cvx.Problem(objective,constraints)
 
