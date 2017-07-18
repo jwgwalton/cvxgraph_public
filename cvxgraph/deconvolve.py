@@ -4,7 +4,8 @@ import numpy as np
 from constraints.spectral_hull_constraint import SpectralHullConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
-from utils import Utils
+from utils.utils import Utils
+from graphs.graph_visualiser import GraphVisualiser
 
 class GraphDeconvolver:
 
@@ -20,6 +21,25 @@ class GraphDeconvolver:
     self.n = n
     self.A1 = Graph.create_adjacency_matrix(n,A1) #could accept either matrix or tuple and create matrix if needed?
     self.A2 = Graph.create_adjacency_matrix(n,A2)
+
+  def is_exact_decomposition(self, A1, A2, tol):
+    '''A1==1 and A2==0, within tolerance tol'''
+    return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
+
+  def is_empty(self, A1, A2):
+    return (A2 == A1 == 0)
+
+  def check_solution(self, A, A1, A2, tol):
+    '''Check exact decomposition, A=A1+A2 and A1 and A2 are distinct non-overlapping graphs'''
+    m,n = A1.shape
+    #if not Utils.deep_equals(A,(A1+A2), tol): #NOT WORKING PROPERLY AS FAR AS CAN TELL
+     # return False
+
+    for i in range(0,n):
+      for j in range(0,i):
+        if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol) or not self.is_exact_decomposition(A2[i,j],A1[i,j],tol) or not self.is_empty(A1[i,j],A2[i,j]):
+          return False
+    return True
 
   def deconvolve(self, A):
     '''
@@ -55,7 +75,7 @@ class GraphDeconvolver:
 
     problem = cvx.Problem(objective,constraints)
 
-    problem.solve(kktsolver='robust')
+    problem.solve(kktsolver='robust',verbose=True)#solver=cvx.MOSEK,verbose=True)
 
     problem_correct = self.check_solution(A, A1_labelled.value, A2_labelled.value, 1e-1)
 
@@ -64,38 +84,18 @@ class GraphDeconvolver:
     else:
       return problem.status,problem_correct,np.nan,np.nan,np.nan
 
-  def check_solution(self, A, A1, A2, tol):
-    '''Check exact decomposition, A=A1+A2 and A1 and A2 are distinct non-overlapping graphs'''
-    m,n = A1.shape
-    if not Utils.deep_equals(A,(A1+A2), tol): #NOT WORKING PROPERLY AS FAR AS CAN TELL
-      return False
-
-    for i in range(0,n):
-      for j in range(0,i):
-        if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol) or not self.is_exact_decomposition(A2[i,j],A1[i,j],tol) or not self.is_empty(A1[i,j],A2[i,j]):
-          return False
-    return True
-
-  def is_exact_decomposition(self, A1, A2, tol):
-    '''A1==1 and A2==0, within tolerance tol'''
-    return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
-
-  def is_empty(self, A1, A2):
-    return (A2 == A1 == 0)
-
 
 if __name__ == '__main__':
-  # complete graph, K_4, not appropriate for deconvolve?
+  n=16
+  #  check size(A) = size(A1)+ size(A2)
+  A = ((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),(0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
+  
+  #16 cycle
+  A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
-  # A= K_4
-  n = 4
-  A=((0,1),(0,2),(0,3),(1,2),(1,3),(2,3),)
+  #clebsch graph
+  A2=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
 
-  # A1 = cycle 
-  A1=((0,1),(1,2),(2,3),(3,0),)
-
-  # A2 = cross joining all nodes
-  A2=((0,2),(1,3),)
   A_matrix  = Graph.create_adjacency_matrix(n,A)
 
   graph_deconvolver = GraphDeconvolver(n,A1,A2)
@@ -110,4 +110,28 @@ if __name__ == '__main__':
   print('A1: \n', A1_star)
   print('A2: \n', A2_star)
   print('A1+A2: \n ', np.add(A1_star,A2_star))
+
+  graph_visualiser = GraphVisualiser(A)
+  graph_visualiser.A.node_attr['shape']='circle'
+  graph_visualiser.A.node_attr['style']='filled'
+  graph_visualiser.A.node_attr['color']='red'
+  graph_visualiser.A.edge_attr['color']='blue'
+  graph_visualiser.A.edge_attr['penwidth']='2em'
+  graph_visualiser.draw_png('A.png')
+
+  graph_visualiser = GraphVisualiser(Graph.create_adjacency_list(n,np.round(A1_star)))
+  graph_visualiser.A.node_attr['shape']='circle'
+  graph_visualiser.A.node_attr['style']='filled'
+  graph_visualiser.A.node_attr['color']='red'
+  graph_visualiser.A.edge_attr['color']='green'
+  graph_visualiser.A.edge_attr['penwidth']='2em'
+  graph_visualiser.draw_png('A1_star.png')
+
+  graph_visualiser = GraphVisualiser(Graph.create_adjacency_list(n,np.round(A2_star)))
+  graph_visualiser.A.node_attr['shape']='circle'
+  graph_visualiser.A.node_attr['style']='filled'
+  graph_visualiser.A.node_attr['color']='red'
+  graph_visualiser.A.edge_attr['color']='blue'
+  graph_visualiser.A.edge_attr['penwidth']='2em'
+  graph_visualiser.draw_png('A2_star.png')
 
