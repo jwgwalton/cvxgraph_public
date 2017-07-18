@@ -10,7 +10,7 @@ class CliqueSchurHornOrbitopeConstraint(Constraint):
 
   def construct_orbitope(self,fixed_adjacency_matrix, variable_adjacency_matrix,clique_size):
     m,n = fixed_adjacency_matrix.shape
-    # equality constraint to make variable matrix be positive semi definite
+    # equality constraint to make variable matrix positive semi definite
     P = cvx.Semidef(n)
 
     self.constraint_list = [cvx.trace(variable_adjacency_matrix) == clique_size, variable_adjacency_matrix == P]

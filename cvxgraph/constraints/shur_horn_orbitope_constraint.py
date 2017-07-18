@@ -6,7 +6,7 @@ class SchurHornOrbitopeConstraint(Constraint):
 
   def __init__(self, fixed_adjacency_matrix, variable_adjacency_matrix):
     super().__init__()
-    self.construct_convex_hull(fixed_adjacency_matrix, variable_adjacency_matrix)
+    self.orbitope(fixed_adjacency_matrix, variable_adjacency_matrix)
 
   def k_largest_eigenvalues(self, A,k):
     '''
