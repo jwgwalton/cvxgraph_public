@@ -23,22 +23,20 @@ class GraphDeconvolver:
     self.A2 = Graph.create_adjacency_matrix(n,A2)
 
   def is_exact_decomposition(self, A1, A2, tol):
-    '''A1==1 and A2==0, within tolerance tol'''
-    return 1-tol <= A1 <= 1+tol and 0-tol<= A2<=0+tol
-
-  def is_empty(self, A1, A2):
-    return (A2 == A1 == 0)
+    '''A1==1 and A2==0 or A1==0 and A2==1, within tolerance tol '''
+    return (1-tol <= abs(A1) <= 1+tol and 0-tol<= abs(A2)<=0+tol) or (1-tol <= abs(A2) <= 1+tol and 0-tol<= abs(A1)<=0+tol)
 
   def check_solution(self, A, A1, A2, tol):
     '''Check exact decomposition, A=A1+A2 and A1 and A2 are distinct non-overlapping graphs'''
     m,n = A1.shape
-    #if not Utils.deep_equals(A,(A1+A2), tol): #NOT WORKING PROPERLY AS FAR AS CAN TELL
-     # return False
-
+    if not Utils.deep_equals(A,(A1+A2), tol): 
+      return False
+ 
     for i in range(0,n):
       for j in range(0,i):
-        if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol) or not self.is_exact_decomposition(A2[i,j],A1[i,j],tol) or not self.is_empty(A1[i,j],A2[i,j]):
-          return False
+        if not (A1[i,j] == A2[i,j] == 0):
+          if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol):
+            return False
     return True
 
   def deconvolve(self, A):

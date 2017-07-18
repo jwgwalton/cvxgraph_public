@@ -2,7 +2,8 @@
 import unittest
 testmodules = [
     'test_utils',
-    'test_graph'
+    'test_graph',
+    'test_solution_checker'
     ]
 
 suite = unittest.TestSuite()
