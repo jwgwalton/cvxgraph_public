@@ -3,7 +3,7 @@ import unittest
 testmodules = [
     'test_utils',
     'test_graph',
-    'test_solution_checker'
+    'test_graph_deconvolver'
     ]
 
 suite = unittest.TestSuite()

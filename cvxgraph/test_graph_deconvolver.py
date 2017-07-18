@@ -3,7 +3,7 @@ from graphs.graph import Graph
 import numpy as np
 import unittest
 
-class TestSolutionChecker(unittest.TestCase):
+class TestGraphDeconvolver(unittest.TestCase):
  
   def setUp(self):
     self.n=4
