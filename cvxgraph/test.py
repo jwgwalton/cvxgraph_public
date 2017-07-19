@@ -2,7 +2,9 @@
 import unittest
 testmodules = [
     'test_utils',
-    'test_graph'
+    'test_graph',
+    'test_graph_deconvolver',
+    'test_lovasz_calculator'
     ]
 
 suite = unittest.TestSuite()

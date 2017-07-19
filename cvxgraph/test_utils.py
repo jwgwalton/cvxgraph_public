@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-from utils import Utils
+from utils.utils import Utils
 from graphs.graph import Graph
 import unittest
 

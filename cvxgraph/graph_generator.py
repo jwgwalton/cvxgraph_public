@@ -6,6 +6,8 @@ from constraints.diagonal_constraint import DiagonalConstraint
 from constraints.degree_constraint import DegreeConstraint
 from constraints.node_limit_constraint import NodeLimitConstraint
 from constraints.laplacian_lambda_second_min_constraint import LaplacianLambdaSecondMinConstraint
+from graphs.graph_visualiser import GraphVisualiser
+from graphs.graph import Graph
 
 class GraphGenerator:
 
@@ -58,3 +60,11 @@ if __name__ == '__main__':
   sorted_eigen_values = np.linalg.eigvalsh(laplacian_of_adjacency_matrix)
   print('2nd smallest eigenvalue: ', sorted_eigen_values[1])
   print('Degree of nodes : ',np.reshape(np.sum(graph,axis=1),n))
+  adjacency_list = Graph.create_adjacency_list(n,graph)
+  graph_visualiser = GraphVisualiser(adjacency_list)
+
+  graph_visualiser.A.node_attr['shape']='circle'
+  graph_visualiser.A.node_attr['style']='filled'
+  graph_visualiser.A.node_attr['color']='red'
+
+  graph_visualiser.draw_png('generated_graph.png')

@@ -8,12 +8,12 @@ class GraphVisualiser():
  
   def __init__(self, adjacency_list):
     self.adjacency_list=adjacency_list
+    self.A = pgv.AGraph()
 
   def draw_png(self, save_path):
-    A = pgv.AGraph()
-    A.add_edges_from(self.adjacency_list)
-    A.layout() 
-    A.draw(save_path)
+    self.A.add_edges_from(self.adjacency_list)
+    self.A.layout(prog='circo')
+    self.A.draw(save_path)
     print('Wrote '+save_path)
 
     

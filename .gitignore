@@ -3,3 +3,4 @@
 constraints/__pycache__/*
 constraints/__pycache__/spectral_hull_constraint.cpython-34.pyc
 *~
+*/*.png

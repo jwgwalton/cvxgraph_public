@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from itertools import product
 import cvxpy as cvx
 import numpy as np
@@ -91,26 +90,3 @@ class LovaszCalculator:
       problem.solve(solver=solver)
 
     return problem
-
-if __name__ == '__main__':
-
-  lovasz_calculator = LovaszCalculator()
-
-  # K_4, 4 node complete graph.
-  # theta(K_n) = 1  
-  n = 4
-  edges=((0,1),(0,2),(0,3),(1,2),(1,3),(2,3),)
-
-  status,value = lovasz_calculator.calculate(n,edges,method=lovasz_calculator.TRACE_METHOD)
-  print('Problem status ',status)
-  print('Lovasz number = %.4g'%(value))
-
-  # K_3, 3 node complete graph
-  # theta(K_n) = 1  
-  n = 3
-  edges=((0,1),(0,2),(1,2),)
-
-  # test lambda method
-  status,value = lovasz_calculator.calculate(n,edges,method=lovasz_calculator.LAMBDA_METHOD)
-  print('Problem status ',status)
-  print('Lovasz number = %.4g'%(value))
