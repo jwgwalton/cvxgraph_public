@@ -34,7 +34,7 @@ class GraphDeconvolver:
  
     for i in range(0,n):
       for j in range(0,i):
-        if not (A1[i,j] == A2[i,j] == 0):
+        if not (abs(A1[i,j]) <= tol and abs(A2[i,j]) <= tol): #both == 0 within tol
           if not self.is_exact_decomposition(A1[i,j],A2[i,j],tol):
             return False
     return True
@@ -73,7 +73,7 @@ class GraphDeconvolver:
 
     problem = cvx.Problem(objective,constraints)
 
-    problem.solve(kktsolver='robust',verbose=True)#solver=cvx.MOSEK,verbose=True)
+    problem.solve(solver=cvx.MOSEK)
 
     problem_correct = self.check_solution(A, A1_labelled.value, A2_labelled.value, 1e-1)
 
@@ -132,4 +132,5 @@ if __name__ == '__main__':
   graph_visualiser.A.edge_attr['color']='blue'
   graph_visualiser.A.edge_attr['penwidth']='2em'
   graph_visualiser.draw_png('A2_star.png')
+
 

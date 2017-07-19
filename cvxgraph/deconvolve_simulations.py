@@ -4,15 +4,6 @@ import random
 from deconvolve import GraphDeconvolver
 from graphs.graph import Graph
 
-def permute_matrix1(A):
-  m,n = np.shape(A)
-  I=np.eye(n)
-  p = random.sample(range(0,n),n)
-  I[:,:] = I[p,:] 
-  I[:,:] = I[:,p]
-  return I*A*np.transpose(I) 
-
-
 def permute_matrix(A):
   m,n = np.shape(A)
   p = random.sample(range(0,n),n)
@@ -35,7 +26,7 @@ A2=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2
 A_matrix  = Graph.create_adjacency_matrix(n,A)
 
 correct_count = 0
-iterations = 10
+iterations = 100
 
 graph_deconvolver = GraphDeconvolver(n,A1,A2)
 
@@ -45,8 +36,5 @@ for i in range(1,iterations):
   if is_correct == True:
     correct_count +=1
   A_matrix= permute_matrix(A_matrix)
-  print(A_matrix)
-  print('Sum of Degree of nodes : ',np.sum(np.reshape(np.sum(A_matrix,axis=1),n)))
-
 
 print(str(correct_count)+' correct out of '+str(iterations)+' iterations')
