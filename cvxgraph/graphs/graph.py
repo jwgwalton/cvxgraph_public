@@ -7,12 +7,13 @@ class Graph(object):
 
   def __init__(self,n, adjacency_matrix=None, adjacency_list=None):
     self.number_of_nodes = n
-    # expects one or other to be populated, is this most pythonic way?
-    if adjacency_matrix == None:
+    if adjacency_matrix is None and adjacency_list is None:
+      raise ValueError('Pass in adjacency list or adjacency matrix to instantiate Graph object')
+    if adjacency_matrix is None:
       self.adjacency_list = adjacency_list
-      self.adjacency_matrix = create_adjacency_matrix(n, adjacency_list)
-    if adjacency_list == None:
-      self.adjacency_list = create_adjacency_list(n, adjacency_matrix)
+      self.adjacency_matrix = self.create_adjacency_matrix(n, adjacency_list)
+    if adjacency_list is None:
+      self.adjacency_list = self.create_adjacency_list(n, adjacency_matrix)
       self.adjacency_matrix = adjacency_matrix
   
   @staticmethod
@@ -28,12 +29,8 @@ class Graph(object):
     '''
     create an adjacency list from an adjaceny matrix
     '''
-    edge_list=[]
-    for j in range(n):
-      for i in range(j):
-        if matrix[i,j] > 0: 
-          edge_list.append((i,j))
-    return tuple(edge_list)
+    return tuple((i,j) for i in range(n) for j in range(i+1,n) if matrix[i,j])
+
 
 if __name__ == '__main__': 
   # A= K_4
