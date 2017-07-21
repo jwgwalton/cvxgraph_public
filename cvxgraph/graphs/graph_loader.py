@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-from graphs.graph import Graph
+from graph import Graph
 
 class GraphLoader():
 
