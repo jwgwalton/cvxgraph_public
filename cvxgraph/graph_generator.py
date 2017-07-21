@@ -22,7 +22,7 @@ class GraphGenerator:
 
     problem = cvx.Problem(objective,constraints)
 
-    problem.solve(verbose=True)
+    problem.solve(solver=cvx.MOSEK, verbose=True)
 
     # gracefully handle failure or infeasibility?
 
@@ -67,4 +67,4 @@ if __name__ == '__main__':
   graph_visualiser.A.node_attr['style']='filled'
   graph_visualiser.A.node_attr['color']='red'
 
-  graph_visualiser.draw_png('generated_graph.png')
+  graph_visualiser.draw_png('figures/generated_graph.png')

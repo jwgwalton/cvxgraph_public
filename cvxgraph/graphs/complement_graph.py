@@ -23,6 +23,6 @@ class ComplementGraph():
         yield (i,j)
 
   @staticmethod
-  def generator():
-    # FIXME use generator from lovasz_number/graph_utils
-    return []
+  def generator(n,matrix):
+    return [] #FIXME
+    #return tuple((i,j) for i in range(n) for j in range(i+1,n) if not matrix[i,j])

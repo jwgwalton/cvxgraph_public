@@ -3,7 +3,6 @@ from random import random
 from itertools import combinations
 
 class ErdosRenyiGraph():
-  # Check that these methods work correctly??
 
   def __init__(self, n,p):
     self.n = n
