@@ -1,7 +1,10 @@
-from lovasz_calculator import LovaszCalculator
-from graphs.graph import Graph
 import numpy as np
 import unittest
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from lovasz_calculator import LovaszCalculator
+from graphs.graph import Graph
 
 class TestLovaszCalculator(unittest.TestCase):
  

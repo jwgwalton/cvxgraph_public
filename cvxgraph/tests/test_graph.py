@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
-from graphs.graph import Graph
 import numpy.testing as npt
 import numpy as np
 import unittest
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'graphs'))
+from graph import Graph
 
 class TestGraph(unittest.TestCase):
  

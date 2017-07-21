@@ -1,6 +1,9 @@
-from utils.utils import Utils
-from graphs.graph import Graph
 import unittest
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', ))
+from graphs.graph import Graph
+from utils.utils import Utils
 
 class TestUtils(unittest.TestCase):
 
