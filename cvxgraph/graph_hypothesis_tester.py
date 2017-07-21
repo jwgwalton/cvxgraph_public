@@ -14,7 +14,7 @@ def test_family(A, M, constraints):
   objective = cvx.Maximize(cvx.trace(A*M))
 
   problem = cvx.Problem(objective,constraints)
-  problem.solve()
+  problem.solve(solver=cvx.MOSEK)
 
   if problem.status=='optimal':
     return problem.value
