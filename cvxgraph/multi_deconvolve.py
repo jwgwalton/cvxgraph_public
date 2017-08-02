@@ -6,6 +6,7 @@ from constraints.node_limit_constraint import NodeLimitConstraint
 from graphs.graph import Graph
 from utils.utils import Utils
 from graphs.graph_visualiser import GraphVisualiser
+from graphs.graph_loader import GraphLoader
 
 class MultiGraphDeconvolver:
 
@@ -92,21 +93,29 @@ class MultiGraphDeconvolver:
 if __name__ == '__main__':
   # labelling of nodes from, http://www.ioirp.com/Doc/IJIRTSE/v1_i3/JMS105.pdf 
   n=16
-  #  check size(A) = size(A1)+ size(A2)
-  A = ((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),(0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),(0,2),(2,4),(4,3),(3,6),(6,7),(7,1),(1,9),(9,8),(8,10),(10,11),(11,12),(12,13),(13,15),(15,14),(14,0),)
+  # clebsch graph
+  file_path = 'graphs/data/clebsch.txt'
+  graph_loader = GraphLoader(n,file_path)
+  clebsch_graph = graph_loader.load()
+
+  # shrikhande graph
+  file_path = 'graphs/data/shrikhande.txt'
+  graph_loader = GraphLoader(n,file_path)
+  shrikhande_graph = graph_loader.load()
   
-  #16 cycle
-  A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
+  # 9 node regular graph
+  new_n=9
+  file_path = 'graphs/data/9_4_1_2.txt'
+  graph_loader = GraphLoader(new_n,file_path)
+  sr_graph = graph_loader.load()
+  
+  # embed in 16 node adjacency matrix
+  srg_matrix = Graph.create_adjacency_matrix(n,sr_graph.adjacency_list)
 
-  #14 cycle 
-  A3 = ((0,2),(2,4),(4,3),(3,6),(6,7),(7,1),(1,9),(9,8),(8,10),(10,11),(11,12),(12,13),(13,15),(15,14),(14,0),)
+  A_matrix  = clebsch_graph.adjacency_matrix + shrikhande_graph.adjacency_matrix + srg_matrix
+  print('A_matrix: ',A_matrix)
 
-  #clebsch graph
-  A2=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
-
-  A_matrix  = Graph.create_adjacency_matrix(n,A)
-
-  graph_deconvolver = MultiGraphDeconvolver(n,A1,A2,A3)
+  graph_deconvolver = MultiGraphDeconvolver(n,clebsch_graph.adjacency_list,shrikhande_graph.adjacency_list,Graph.create_adjacency_list(n,srg_matrix)) 
 
   status,is_correct,problem_value,A1_star,A2_star,A3_star= graph_deconvolver.deconvolve(A_matrix)
 
@@ -120,7 +129,7 @@ if __name__ == '__main__':
   print('A3: \n', A2_star)
   print('A1+A2+A3: \n ', np.add(A1_star,A2_star,A3_star))
 
-  graph_visualiser = GraphVisualiser(A)
+  graph_visualiser = GraphVisualiser(Graph.create_adjacency_list(n,A_matrix))
   graph_visualiser.A.node_attr['shape']='circle'
   graph_visualiser.A.node_attr['style']='filled'
   graph_visualiser.A.node_attr['color']='red'
