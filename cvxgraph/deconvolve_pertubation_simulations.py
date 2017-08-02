@@ -10,11 +10,12 @@ from is_cycle import is_cycle
 #####################################################################################
 # Test perturbing the graphs by adding removing edges in the strongly regular graph #
 #####################################################################################
-def run_simulation(n, A1, clebsch_graph, iterations):
+def run_simulation(n, A1, clebsch_graph, iterations,number_of_pertubations):
   correct_count = 0
   for i in range(0,iterations):
     # perturb matrix (add/remove edge randomly)
-    clebsch_matrix = perturb_matrix(n,clebsch_graph.adjacency_matrix)
+    clebsch_matrix = clebsch_graph.adjacency_matrix.copy()
+    clebsch_matrix = perturb_matrix(n,clebsch_matrix, number_of_pertubations)
     A2 = Graph.create_adjacency_list(n,clebsch_matrix) #need to do this as it hasn't updated the internal adjacency list representation
 
     # graph deconvolver with new components
@@ -35,7 +36,7 @@ def run_simulation(n, A1, clebsch_graph, iterations):
 
 if __name__ == '__main__':
   n=16
-  graph_name = 'clebsch'
+  graph_name = 'shrikhande'
   # clebsch graph
   file_path = 'graphs/data/'+graph_name+'.txt'
   graph_loader = GraphLoader(n,file_path)
@@ -45,10 +46,16 @@ if __name__ == '__main__':
   A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
   iterations = 100
+  max_number_perturbations = 4
 
-  correct_count = run_simulation(n, A1,clebsch_graph,iterations)
+  file_path = 'results/'+graph_name+'_deconvolution_perturbations.txt'
+  f=open(file_path,'w')
 
-  print(str(correct_count)+' correct out of '+str(iterations)+' iterations')
+  for number_of_perturbations in range(1,max_number_perturbations+1):
+    correct_count = run_simulation(n, A1,clebsch_graph,iterations, number_of_perturbations)
+    f.write(str(number_of_perturbations) + ' ' + str(correct_count) +'\n')
+    print(str(correct_count) + ' out of '+ str(iterations) + ' iterations')
+  f.close()
 
 
 

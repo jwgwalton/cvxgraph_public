@@ -5,15 +5,16 @@ from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 import numpy as np
 
-def perturb_matrix(n, matrix):
-  i = np.random.random_integers(0,n-1)
-  j = np.random.random_integers(0,n-1)
-  if matrix[i][j] == 0:
-    matrix[i][j] =1
-    matrix[j][i] =1
-  elif matrix[i][j] == 1:
-    matrix[i][j] =0
-    matrix[j][i] =0
+def perturb_matrix(n, matrix, number_of_pertubations):
+  for perturbation in range(0,number_of_pertubations):
+    i = np.random.random_integers(0,n-1)
+    j = np.random.random_integers(0,n-1)
+    if matrix[i][j] == 0:
+      matrix[i][j] =1
+      matrix[j][i] =1
+    elif matrix[i][j] == 1:
+      matrix[i][j] =0
+      matrix[j][i] =0
   return matrix
 
 def run_simulation(n, graph_name):
