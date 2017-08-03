@@ -13,8 +13,8 @@ from multipartite_graphs.multipartite_graph_recognizer_00 import Multipartite_gr
 # Test deconvolve complete multipartite graphs with small pertubations #
 #####################################################################################
 
-def perturb_matrix(n,matrix, pertubation_scale):
-  pertubation_matrix = np.random.normal(scale=pertubation_scale,size=(n,n))
+def perturb_matrix(n,matrix, perturbation_scale):
+  pertubation_matrix = np.random.normal(scale=perturbation_scale,size=(n,n))
   return matrix+pertubation_matrix
 
 

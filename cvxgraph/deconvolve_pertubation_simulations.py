@@ -24,7 +24,7 @@ def run_simulation(n, A1, clebsch_graph, iterations,number_of_pertubations):
     #convolved graphs
     A_matrix  = Graph.create_adjacency_matrix(n,A1) + clebsch_matrix
 
-    status,is_correct,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
+    status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
 
     print('Problem status: ',status)
     cycle = is_cycle(Graph.create_adjacency_list(n,A1_star))

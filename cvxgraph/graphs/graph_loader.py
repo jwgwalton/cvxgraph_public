@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-from graph import Graph
+from graphs.graph import Graph
 
 class GraphLoader():
 
@@ -10,7 +10,7 @@ class GraphLoader():
 
   def load(self):
     adjacency_matrix = np.loadtxt(self.file_path, dtype=int)
-    print(adjacency_matrix)
+    #print(adjacency_matrix)
     return Graph(self.n,adjacency_matrix=adjacency_matrix)
 
 if __name__ == '__main__':

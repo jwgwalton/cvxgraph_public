@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 from graph import Graph
+from graph_loader import GraphLoader
 from permutation_matrix import PermutationMatrix
-n=16
-# 16 cycle  
-A1=((7,1),(1,6),(6,5),(5,0),(0,8),(8,3),(3,9),(9,14),(14,13),(13,12),(12,11),(11,10),(10,9),(9,7),(7,15),(15,7),)
 
-# Shrikhande Graph: 
-A2=((0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(1,3),(1,7),(1,8),(1,9),(2,3),(2,10),(2,11),(2,12),(3,13),(3,14),(3,15),(4,5),(4,6),(4,7),(4,10),(4,13),(5,6),(5,8),(5,11),(5,14),(6,9),(6,12),(6,15),(7,8),(7,9),(7,10),(7,13),(8,9),(8,11),(8,14),(9,12),(9,15),(10,11),(10,12),(10,13),(11,12),(11,14),(12,15),(13,14),(13,15),(14,15),)
+n=45
+# 45 cycle  
+A1=((0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,16),(16,17),(17,18),(18,19),(19,20),(20,21),(21,22),(22,23),(23,24),(24,25),(25,26),(26,27),(27,28),(28,29),(29,30),(30,31),(31,32),(32,33),(33,34),(34,35),(35,36),(36,37),(37,38),(38,39),(39,40),(40,41),(41,42),(42,43),(43,44),(44,0),)
 
+file_path = 'data/45_12_3_3.txt'
+graph_loader = GraphLoader(n,file_path)
+regular_graph = graph_loader.load()
 
-clebsch_matrix = Graph.create_adjacency_matrix(n,A1)
-shrikande_matrix = Graph.create_adjacency_matrix(n,A2)
+cycle_matrix = Graph.create_adjacency_matrix(n,A1)
+regular_graph_matrix = regular_graph.adjacency_matrix
 
 def contains_same_edge(A,B, tol):
   m,n = A.shape # does this only work on numpy matrices?
@@ -20,10 +22,9 @@ def contains_same_edge(A,B, tol):
         return True
   return False
 
-while contains_same_edge(clebsch_matrix, shrikande_matrix, 0.1):
-  clebsch_matrix = PermutationMatrix.permute_matrix(clebsch_matrix)
+while contains_same_edge(cycle_matrix, regular_graph_matrix, 0.1):
+  cycle_matrix = PermutationMatrix.permute_matrix(cycle_matrix)
 
 # could test the adjacency lists different
-print('16 cycle: ',Graph.create_adjacency_list(n,clebsch_matrix))
-print('shrikhande graph: ',Graph.create_adjacency_list(n,shrikande_matrix))
+print('45 cycle: ',Graph.create_adjacency_list(n,cycle_matrix))
   

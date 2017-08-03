@@ -14,12 +14,12 @@ from eigenvalue_investigations.eigenvalue_pertubations import perturb_matrix
 # Test deconvolve complete multipartite graphs and perturbing the graphs by adding removing edges#
 ##################################################################################################
 
-def run_simulation(n, A1, multipartite_graph_matrix, iterations, partitions, pertubation_scale = 0.1):
+def run_simulation(n, A1, multipartite_graph_matrix, iterations, partitions, number_of_pertubations):
   correct_count = 0
   for i in range(0,iterations):
     # perturb matrix (introduce noise to the weights)
     multipartite_graph_matrix = multipartite_graph_matrix.copy()
-    graph_matrix = perturb_matrix(n,multipartite_graph_matrix, pertubation_scale)
+    graph_matrix = perturb_matrix(n,multipartite_graph_matrix, number_of_pertubations)
     A2 = Graph.create_adjacency_list(n,graph_matrix) #need to do this as it hasn't updated the internal adjacency list representation
 
     # graph deconvolver with new components
@@ -64,14 +64,13 @@ if __name__ == '__main__':
   A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
   iterations = 100
+  max_number_perturbations = 4
 
-  perturbations = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.01, 0.12, 0.15, 0.2, 0.22, 0.25]
-  file_path = 'results/multipartite_deconvolution_small_perturbation.txt'
+  file_path = 'results/multipartite_deconvolution_perturbation.txt'
   f=open(file_path,'w')
-  for perturbation in perturbations:
-    print('Perturbation scale: ',perturbation)
-    correct_count = run_simulation(n, A1,multipartite_graph_matrix,iterations,p)
-    f.write(str(perturbation) + ' ' + str(correct_count) +'\n')
+  for number_of_perturbations in range(1,max_number_perturbations+1):
+    correct_count = run_simulation(n, A1,multipartite_graph_matrix,iterations, p, number_of_perturbations)
+    f.write(str(number_of_perturbations) + ' ' + str(correct_count) +'\n')
     print(str(correct_count) + ' out of '+ str(iterations) + ' iterations')
   f.close()
 

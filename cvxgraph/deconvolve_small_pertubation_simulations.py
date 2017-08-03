@@ -16,11 +16,11 @@ def perturb_matrix(n,matrix, pertubation_scale):
   return matrix+pertubation_matrix
 
 
-def run_simulation(n, A1, clebsch_graph, iterations, pertubation_scale = 0.1):
+def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1):
   correct_count = 0
   for i in range(0,iterations):
     # perturb matrix (introduce noise to the weights)
-    clebsch_matrix = perturb_matrix(n,clebsch_graph.adjacency_matrix, pertubation_scale)
+    clebsch_matrix = perturb_matrix(n,clebsch_graph.adjacency_matrix, perturbation_scale)
     A2 = Graph.create_adjacency_list(n,clebsch_matrix) #need to do this as it hasn't updated the internal adjacency list representation
 
     # graph deconvolver with new components
@@ -29,7 +29,7 @@ def run_simulation(n, A1, clebsch_graph, iterations, pertubation_scale = 0.1):
     #convolved graphs
     A_matrix  = Graph.create_adjacency_matrix(n,A1) + clebsch_matrix
 
-    status,is_correct,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
+    status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
 
     print('Problem status: ',status)
     cycle = is_cycle(Graph.create_adjacency_list(n,A1_star))
@@ -41,7 +41,7 @@ def run_simulation(n, A1, clebsch_graph, iterations, pertubation_scale = 0.1):
 
 if __name__ == '__main__':
   n=16
-  graph_name = 'clebsch'
+  graph_name = 'shrikhande'
   # clebsch graph
   file_path = 'graphs/data/'+graph_name+'.txt'
   graph_loader = GraphLoader(n,file_path)
@@ -50,18 +50,14 @@ if __name__ == '__main__':
   #16 cycle
   A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
-  iterations = 100
+  iterations = 1
 
-  smallest_perturbation_scale = 1
-  largest_perturbation_scale = 40
-  normalisation_scale = 100
+  perturbations = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.01, 0.12, 0.15, 0.2, 0.22, 0.25]
   file_path = 'results/'+graph_name+'_deconvolution_small_perturbation.txt'
   f=open(file_path,'w')
-  for perturbation_scale in range(smallest_perturbation_scale, largest_perturbation_scale):
-    perturbation_scale2 = perturbation_scale/normalisation_scale # can't iterate over non integers
-    print('Pertubation scale: ',perturbation_scale2)
-    correct_count = run_simulation(n, A1,clebsch_graph,iterations,perturbation_scale2)
-    f.write(str(perturbation_scale2) + ' ' + str(correct_count) +'\n')
+  for perturbation in perturbations:
+    print('Perturbation scale: ',perturbation)
+    correct_count = run_simulation(n, A1,clebsch_graph,iterations,perturbation_scale=perturbation)
+    f.write(str(perturbation) + ' ' + str(correct_count) +'\n')
     print(str(correct_count) + ' out of '+ str(iterations) + ' iterations')
   f.close()
-

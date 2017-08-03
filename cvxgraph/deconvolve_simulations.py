@@ -4,6 +4,10 @@ import random
 from deconvolve import GraphDeconvolver
 from graphs.graph import Graph
 
+########################################################
+# Test permuting the labellings of the convolved graph #
+########################################################
+
 def permute_matrix(A):
   m,n = np.shape(A)
   p = random.sample(range(0,n),n)
@@ -31,10 +35,11 @@ iterations = 100
 graph_deconvolver = GraphDeconvolver(n,A1,A2)
 
 for i in range(1,iterations):
-  status,is_correct,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
-  print('Problem correct: ', is_correct)
-  if is_correct == True:
-    correct_count +=1
-  A_matrix= permute_matrix(A_matrix)
+  status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
+  print('Problem status: ',status)
+  cycle = is_cycle(Graph.create_adjacency_list(n,A1_star))
+  print('Is cycle: ', cycle)
+  if cycle:
+   correct_count +=1
 
 print(str(correct_count)+' correct out of '+str(iterations)+' iterations')
