@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 
 class Graph(object):
@@ -12,9 +13,11 @@ class Graph(object):
     if adjacency_matrix is None:
       self.adjacency_list = adjacency_list
       self.adjacency_matrix = self.create_adjacency_matrix(n, adjacency_list)
+      self.adjacency_table = self.create_adjacency_table(n, self.adjacency_matri)
     if adjacency_list is None:
       self.adjacency_list = self.create_adjacency_list(n, adjacency_matrix)
       self.adjacency_matrix = adjacency_matrix
+      self.adjacency_table = self.create_adjacency_table(n, self.adjacency_matrix)
   
   @staticmethod
   def create_adjacency_matrix(n, edge_list):
@@ -29,7 +32,17 @@ class Graph(object):
     '''
     create an adjacency list from an adjaceny matrix
     '''
-    return tuple((i,j) for i in range(n) for j in range(i+1,n) if matrix[i,j])
+    return tuple((i,j) for i in range(n) for j in range(i+1,n) if matrix[i,j]>0.5)
+
+  @staticmethod
+  def create_adjacency_table(n,matrix):
+    adjacency_table=dict((i,[]) for i in range(n))
+    for i in range(n):
+      for j in range(i):
+        if matrix[i,j] > 0.5:
+          adjacency_table[i].append(j)
+          adjacency_table[j].append(i)
+    return adjacency_table
 
 
 if __name__ == '__main__': 
@@ -43,6 +56,9 @@ if __name__ == '__main__':
   A_list = Graph.create_adjacency_list(n,A_matrix)
   print('Original edge list: ', A)
   print('Calculated edge list: ',A_list)
+
+  A_table = Graph.create_adjacency_table(n,A_matrix)
+  print('Adjacency table: ', A_table)
 
 
 
