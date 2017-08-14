@@ -7,6 +7,7 @@ from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
 from utils.utils import Utils
+from gaussian_noise_perturb import perturb_matrix
 
 class GraphDenoiser:
   '''
@@ -40,11 +41,6 @@ class GraphDenoiser:
 
 
 if __name__ == '__main__':
-
-
-  def perturb_matrix(n,matrix, perturbation_scale):
-    pertubation_matrix = np.random.normal(scale=perturbation_scale,size=(n,n))
-    return matrix+pertubation_matrix
 
   n=16
   

@@ -6,15 +6,11 @@ from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
 from is_cycle import is_cycle
+from gaussian_noise_perturb import perturb_matrix
 
 #############################################################################################
 # Test pertubing the graph by  adding noise to the edges, (small pertubations in magnitude) #
 #############################################################################################
-
-def perturb_matrix(n,matrix, pertubation_scale):
-  pertubation_matrix = np.random.normal(scale=pertubation_scale,size=(n,n))
-  return matrix+pertubation_matrix
-
 
 def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1):
   correct_count = 0

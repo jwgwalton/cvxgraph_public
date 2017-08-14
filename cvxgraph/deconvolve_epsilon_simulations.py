@@ -6,15 +6,11 @@ from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
 from is_cycle import is_cycle
+from gaussian_noise_perturb import perturb_matrix
 
 #############################################################################################
 # Test pertubing the graph by  adding noise to the edges, (small pertubations in magnitude) #
 #############################################################################################
-
-def perturb_matrix(n,matrix, pertubation_scale):
-  pertubation_matrix = np.random.normal(scale=pertubation_scale,size=(n,n))
-  return matrix+pertubation_matrix
-
 
 def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1,epsilon=0):
   correct_count = 0
@@ -50,11 +46,11 @@ if __name__ == '__main__':
   #16 cycle
   A1 = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
-  iterations = 1
+  iterations = 100
 
-  perturbations = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.01, 0.12, 0.15, 0.2, 0.22, 0.25]
-  epsilons = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.01, 0.12, 0.15, 0.2, 0.22, 0.25] # could have as different numbers but 
-  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_epsilon.txt'
+  perturbations = [0.12]#, 0.22, 0.25]
+  epsilons = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1]
+  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_012_relative_epsilon.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)

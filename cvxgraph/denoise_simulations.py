@@ -6,15 +6,11 @@ from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
 from is_cycle import is_cycle
+from gaussian_noise_perturb import perturb_matrix
 
 #############################################################################################
 # Test denoiser #
 #############################################################################################
-
-def perturb_matrix(n,matrix, perturbation_scale):
-  pertubation_matrix = np.random.normal(scale=perturbation_scale,size=(n,n))
-  return matrix+pertubation_matrix
-
 
 def run_simulation(n, cycle,itererations, perturbation_scale = 0.1,epsilon=0):
   correct_count = 0
@@ -46,9 +42,9 @@ if __name__ == '__main__':
   iterations = 100
   graph_name = 'cycle'
 
-  perturbations = [0.15, 0.2, 0.22, 0.25,0.3,0.32,0.35, 0.4, 0.42, 0.45, 0.5 ]
+  perturbations = [0.4]#, 0.2, 0.22, 0.25,0.3,0.32,0.35, 0.4, 0.42, 0.45, 0.5 ]
   epsilons = [0, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.12, 0.15, 0.2, 0.22, 0.25]
-  file_path = 'results/'+graph_name+'_denoise_epsilon3.txt'
+  file_path = 'results/'+graph_name+'_denoise_epsilon_04.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)

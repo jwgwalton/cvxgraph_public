@@ -7,16 +7,12 @@ from graphs.graph_visualiser import GraphVisualiser
 from multipartite_graphs.generate_multipartite_graphs import complete_multipartite
 from is_cycle import is_cycle
 from degree_sequence import check_degree_sequence
-from multipartite_graphs.multipartite_graph_recognizer_00 import Multipartite_graph_recognizer
+from multipartite_graphs.multipartite_graph_recognizer_02 import Multipartite_graph_recognizer
+from gaussian_noise_perturb import perturb_matrix
 
 #####################################################################################
 # Test deconvolve complete multipartite graphs with small pertubations #
 #####################################################################################
-
-def perturb_matrix(n,matrix, perturbation_scale):
-  pertubation_matrix = np.random.normal(scale=perturbation_scale,size=(n,n))
-  return matrix+pertubation_matrix
-
 
 def run_simulation(n, A1, multipartite_graph_matrix, iterations, partitions, perturbation_scale = 0.1):
   correct_count = 0
