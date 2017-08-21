@@ -14,9 +14,10 @@ from gaussian_noise_perturb import perturb_matrix
 
 def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1,epsilon=0):
   correct_count = 0
+  epsilon_vector = epsilon*np.ones(n)
   for i in range(0,iterations):
     # perturb matrix (introduce noise to the weights)
-    clebsch_matrix = perturb_matrix(n,clebsch_graph.adjacency_matrix, perturbation_scale)
+    clebsch_matrix = perturb_matrix(clebsch_graph.adjacency_matrix, perturbation_scale)
     A2 = Graph.create_adjacency_list(n,clebsch_matrix) #need to do this as it hasn't updated the internal adjacency list representation
 
     # graph deconvolver with new components
@@ -25,14 +26,15 @@ def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1,ep
     #convolved graphs
     A_matrix  = Graph.create_adjacency_matrix(n,A1) + clebsch_matrix
 
-    status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix,epsilon=epsilon)
+    status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix,epsilon_vector)
 
-    print('Problem status: ',status)
-    cycle = is_cycle(Graph.create_adjacency_list(n,A1_star))
-    print('Is cycle: ', cycle)
+    if status == 'optimal':
+      print('Problem status: ',status)
+      cycle = is_cycle(Graph.create_adjacency_list(n,A1_star))
+      print('Is cycle: ', cycle)
 
-    if cycle:
-     correct_count +=1
+      if cycle:
+        correct_count +=1
   return correct_count
 
 if __name__ == '__main__':
@@ -48,9 +50,9 @@ if __name__ == '__main__':
 
   iterations = 100
 
-  perturbations = [0.12]#, 0.22, 0.25]
+  perturbations = [0.1, 0.12, 0.15]#, 0.22, 0.25]
   epsilons = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1]
-  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_012_relative_epsilon.txt'
+  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_1_epsilon.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)

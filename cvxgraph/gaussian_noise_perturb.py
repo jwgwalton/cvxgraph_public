@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import numpy as np
 from graphs.graph import Graph
+sqrt2=1.4142135623730950488016887242
 
-
-def perturb_matrix(n,matrix, perturbation_scale):
-  perturbation_matrix = np.random.normal(scale=perturbation_scale,size=(n,n))
-  perturbation_matrix += perturbation_matrix.T
-  perturbation_matrix = 0.5*perturbation_matrix
-  return matrix+perturbation_matrix
+def perturb_matrix(A,sigma):
+  e=np.random.normal(scale=sigma,size=A.shape)
+ # for i in range(A.shape[0]): e[i,i]=0.0 # having 0 on diagonal ruins covariance matrix
+  return A+(e+e.transpose())/sqrt2  # symmetrized
 
 
 def is_symmetric(matrix):
@@ -25,7 +24,7 @@ if __name__ == '__main__':
   A = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),) 
   A_matrix = Graph.create_adjacency_matrix(n,A)
 
-  A_matrix_noisy = perturb_matrix(n,A_matrix,0.4)
+  A_matrix_noisy = perturb_matrix(A_matrix,0.4)
 
 
-  print(is_symmetric(A_matrix_noisy))
+  print(is_symmetric(A_matrix_noisy)) 

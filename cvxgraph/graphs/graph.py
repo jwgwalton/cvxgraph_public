@@ -35,6 +35,15 @@ class Graph(object):
     return tuple((i,j) for i in range(n) for j in range(i+1,n) if matrix[i,j]>0.5)
 
   @staticmethod
+  def create_weighted_adjacency_list(n, matrix,tol):
+    '''
+    create an adjacency list from a weighted adjacency matrix, will only return edge if larger than tol
+    returns tuple of (start_node, end_node, edge_weight)
+    '''
+    return tuple((i,j,matrix[i,j]) for i in range(n) for j in range(i+1,n) if matrix[i,j]>tol)
+
+
+  @staticmethod
   def create_adjacency_table(n,matrix):
     adjacency_table=dict((i,[]) for i in range(n))
     for i in range(n):
@@ -43,6 +52,9 @@ class Graph(object):
           adjacency_table[i].append(j)
           adjacency_table[j].append(i)
     return adjacency_table
+
+
+
 
 
 if __name__ == '__main__': 

@@ -16,6 +16,13 @@ class GraphVisualiser():
     self.A.draw(save_path)
     print('Wrote '+save_path)
 
+  def draw_png_weighted_graph(self, save_path):
+    for edge in self.adjacency_list:      
+      self.A.add_edge(edge[0],edge[1],penwidth=edge[2])
+    self.A.layout(prog='circo')
+    self.A.draw(save_path)
+    print('Wrote '+save_path)
+
     
 
 if __name__ == '__main__':

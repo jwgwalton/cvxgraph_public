@@ -22,7 +22,7 @@ class GraphDeconvolver:
     self.A1 = Graph.create_adjacency_matrix(n,A1) #could accept either matrix or tuple and create matrix if needed?
     self.A2 = Graph.create_adjacency_matrix(n,A2)
 
-  def deconvolve(self, A, epsilon=0):
+  def deconvolve(self, A, epsilon_vector):
     '''
     Recover the precise labelling of A1 and A2, A = A1+A2.
 
@@ -45,8 +45,8 @@ class GraphDeconvolver:
     objective = cvx.Minimize(cvx.pnorm((A - A1_labelled - A2_labelled), 2))
 
     # Convex hull constraints
-    A1_hull = SpectralHullConstraint(self.A1, A1_labelled, epsilon=epsilon)
-    A2_hull = SpectralHullConstraint(self.A2, A2_labelled, epsilon=epsilon)
+    A1_hull = SpectralHullConstraint(self.A1, A1_labelled, epsilon_vector)
+    A2_hull = SpectralHullConstraint(self.A2, A2_labelled, epsilon_vector)
 
     # all values between 0 and 1
     A1_limits = NodeLimitConstraint(A1_labelled,lower_limit=0, upper_limit=1)
@@ -79,7 +79,8 @@ if __name__ == '__main__':
 
   graph_deconvolver = GraphDeconvolver(n,A1,A2)
 
-  status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix)
+  epsilon_vector = np.zeros(n)
+  status,problem_value,A1_star,A2_star= graph_deconvolver.deconvolve(A_matrix, epsilon_vector)
 
   np.set_printoptions(suppress=True)
   print('Problem status: ',status)
