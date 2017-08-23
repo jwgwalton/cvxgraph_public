@@ -50,9 +50,9 @@ if __name__ == '__main__':
 
   iterations = 100
 
-  perturbations = [0.1, 0.12, 0.15]#, 0.22, 0.25]
+  perturbations = [0.005, 0.0052, 0.0055]#, 0.22, 0.25]
   epsilons = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1]
-  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_1_epsilon.txt'
+  file_path = 'results/'+graph_name+'_deconvolution_small_perturbation_005_epsilon.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)

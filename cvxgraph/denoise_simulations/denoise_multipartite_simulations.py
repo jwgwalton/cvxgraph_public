@@ -54,9 +54,9 @@ if __name__ == '__main__':
 
   iterations = 100
 
-  perturbations = [0.01, 0.012,0.015]
+  perturbations = [0.2, 0.22,0.25]
   epsilons = [0, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.12, 0.15, 0.2, 0.22, 0.25]
-  file_path = '../results/multipartite_denoise_epsilon_01.txt'
+  file_path = '../results/multipartite_denoise_epsilon_2.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)

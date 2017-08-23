@@ -8,9 +8,9 @@ from graphs.graph_visualiser import GraphVisualiser
 from is_cycle import is_cycle
 from gaussian_noise_perturb import perturb_matrix
 
-#############################################################################################
-# Test pertubing the graph by  adding noise to the edges, (small pertubations in magnitude) #
-#############################################################################################
+###############################################################################################
+# Test perturbing the graph by  adding noise to the edges, (small perturbations in magnitude) #
+###############################################################################################
 
 def run_simulation(n, A1, clebsch_graph, iterations, perturbation_scale = 0.1):
   correct_count = 0

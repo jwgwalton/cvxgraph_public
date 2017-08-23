@@ -8,6 +8,6 @@ if __name__ == '__main__':
   file_location = 'shrikhande_deconvolution_small_perturbation.txt'
   x1,y1 = load_results(file_location)
 
-  figure_location = 'figures/deconvolution_small_perturbation.pdf'
+  figure_location = 'deconvolution_small_perturbation.pdf'
   plot_results(x,y,x1,y1, figure_location, x_axis_title='σ of Gaussian distributed noise',x_is_log=True)
 

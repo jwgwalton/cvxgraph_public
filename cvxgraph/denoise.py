@@ -8,6 +8,7 @@ from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
 from utils.utils import Utils
 from gaussian_noise_perturb import perturb_matrix
+from is_cycle import is_cycle
 
 class GraphDenoiser:
   '''
@@ -58,17 +59,17 @@ if __name__ == '__main__':
  # A = ((0,5),(5,13),(13,14),(14,6),(6,1),(1,7),(7,2),(2,8),(8,11),(11,15),(15,10),(10,9),(9,4),(4,12),(12,3),(3,0),)
 
   #clebsch graph
-  #A=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
+  A=((0,1),(0,4),(0,7),(0,9),(0,10),(1,2),(1,5),(1,8),(1,11),(2,3),(2,6),(2,9),(2,12),(3,4),(3,5),(3,7),(3,13),(4,6),(4,8),(4,14),(5,10),(5,14),(5,15),(6,10),(6,11),(6,15),(7,11),(7,12),(7,15),(8,12),(8,13),(8,15),(9,13),(9,14),(9,15),(10,12),(10,13),(11,13),(11,14),(12,14),)
 
-  A_matrix =  bicycle(n)
-  A = Graph.create_adjacency_list(n,A_matrix)
+  #A_matrix =  bicycle(n)
+  #A = Graph.create_adjacency_list(n,A_matrix)
 
   graph_denoiser = GraphDenoiser(n,A)
 
   # add gaussian noise to cycle
   
-  #A_matrix = Graph.create_adjacency_matrix(n,A)
-  A_matrix_noisy = perturb_matrix(A_matrix,0.1)
+  A_matrix = Graph.create_adjacency_matrix(n,A)
+  A_matrix_noisy = perturb_matrix(A_matrix,0.2)
 
   epsilon_vector = np.zeros(n)
 
@@ -78,7 +79,7 @@ if __name__ == '__main__':
   print('Problem status: ',status)
   print('Norm value: ',problem_value)
   print('Recovered A:  \n', A_recovered)
-  print('is clebsch graph: ',np.allclose(Graph.create_adjacency_matrix(n,A),A_recovered, atol=1e-1))
+  print('is cycle graph: ',is_cycle(Graph.create_adjacency_list(n,A_recovered)))
 
 
   def set_visualiser_attributes(graph_visualiser):

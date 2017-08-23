@@ -27,22 +27,11 @@ if __name__ == '__main__':
   plt.xlabel('σ of Gaussian noise')
   plt.ylabel('ε')
 
-  save_location='deconvolution_epsilon.pdf'
+  save_location='clebsch_deconvolution_epsilon.pdf'
   plt.savefig(save_location)
 
 
-  file_location = 'cycle_denoise_epsilon.txt'
-  sigma,epsilon,success = load_results(file_location)
-
-  fig = plt.figure(figsize=(8, 8))
-  ax = fig.add_subplot(1, 1, 1)
-  ax.tricontourf(sigma,epsilon,success, 100)
-
-  plt.xlabel('σ of Gaussian noise')
-  plt.ylabel('ε')
-
-  save_location='denoise_epsilon.pdf'
-  plt.savefig(save_location)
+######################################################################
 
   file_location = 'cycle_denoise_new.txt'
   sigma,epsilon,success = load_results(file_location)
@@ -54,6 +43,21 @@ if __name__ == '__main__':
   plt.xlabel('σ of Gaussian noise')
   plt.ylabel('ε')
 
-  save_location='cycle_denoise_epsilon_new.pdf'
+  save_location='cycle_denoise_epsilon.pdf'
+  plt.savefig(save_location)
+
+######################################################################
+
+  file_location = 'bicycle_denoise_epsilon.txt'
+  sigma,epsilon,success = load_results(file_location)
+
+  fig = plt.figure(figsize=(8, 8))
+  ax = fig.add_subplot(1, 1, 1)
+  ax.tricontourf(sigma,epsilon,success, 100)
+
+  plt.xlabel('σ of Gaussian noise')
+  plt.ylabel('ε')
+
+  save_location='bicycle_denoise_epsilon.pdf'
   plt.savefig(save_location)
 
