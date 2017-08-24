@@ -58,9 +58,9 @@ if __name__ == '__main__':
   iterations = 100
   graph_name = 'cycle'
 
-  perturbations = [0.4, 0.42, 0.45]
-  epsilons = [0, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.12, 0.15, 0.2, 0.22, 0.25]
-  file_path = '../results/'+graph_name+'_denoise_epsilon_4.txt'
+  perturbations = [0.1, 0.12, 0.15]
+  epsilons = [0]#, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.12, 0.15, 0.2, 0.22, 0.25]
+  file_path = '../results/'+graph_name+'_denoise_no_epsilon_1.txt'
   f=open(file_path,'w')
   for perturbation in perturbations:
     print('Perturbation scale: ',perturbation)
