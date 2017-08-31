@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', ))
 import numpy as np
 import random
 from deconvolve import GraphDeconvolver

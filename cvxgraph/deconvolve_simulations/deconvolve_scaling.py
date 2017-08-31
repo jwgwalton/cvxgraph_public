@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', ))
 from graphs.graph import Graph
 from graphs.graph_loader import GraphLoader
 from graphs.graph_visualiser import GraphVisualiser
